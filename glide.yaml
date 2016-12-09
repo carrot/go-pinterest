@@ -1,0 +1,4 @@
+package: github.com/carrot/pinterest-go-client
+import:
+- package: github.com/BrandonRomano/wrecker
+- package: github.com/joeshaw/iso8601
