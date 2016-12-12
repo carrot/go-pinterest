@@ -1,8 +1,8 @@
 package main_test
 
 import (
-	pinterest "github.com/carrot/pinterest-go-client"
-	"github.com/carrot/pinterest-go-client/models"
+	pinterest "github.com/carrot/go-pinterest"
+	"github.com/carrot/go-pinterest/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"net/http"

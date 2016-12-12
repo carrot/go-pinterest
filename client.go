@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/BrandonRomano/wrecker"
-	"github.com/carrot/pinterest-go-client/controllers"
+	"github.com/carrot/go-pinterest/controllers"
 	"net/http"
 	"time"
 )

@@ -1,4 +1,4 @@
-package: github.com/carrot/pinterest-go-client
+package: github.com/carrot/go-pinterest
 import:
 - package: github.com/BrandonRomano/wrecker
   version: v0.1.1
