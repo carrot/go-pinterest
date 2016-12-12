@@ -1,0 +1,11 @@
+language: go
+go:
+  - 1.6
+  - master
+before_install:
+  - go get github.com/Masterminds/glide
+  - go get github.com/stretchr/testify
+install:
+  - $HOME/gopath/bin/glide install
+script:
+  - go test
