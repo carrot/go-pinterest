@@ -28,7 +28,7 @@ type ClientTestSuite struct {
 func (suite *ClientTestSuite) SetupTest() {
 	suite.client = pinterest.NewClient().
 		RegisterAccessToken(os.Getenv("PINTEREST_ACCESS_TOKEN"))
-	suite.client = pinterest.NewSpoofClient()
+	suite.spoofClient = pinterest.NewSpoofClient()
 }
 
 func (suite *ClientTestSuite) TestSpoofClient() {
