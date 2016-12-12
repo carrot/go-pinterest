@@ -22,7 +22,7 @@ type Client struct {
 }
 
 // NewClient generates a new instance of a Client, which will
-// allow you to interact with the Pinterest API
+// allow you to interact with the Pinterest API.
 func NewClient() *Client {
 	pinterestClient := &Client{
 		wreckerClient: &wrecker.Wrecker{

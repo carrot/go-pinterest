@@ -11,7 +11,7 @@ import (
 )
 
 // In order for 'go test' to run this suite, we need to create
-// a normal test function and pass our suite to suite.Run
+// a normal test function and pass our suite to suite.Run.
 func TestClientTestSuite(t *testing.T) {
 	suite.Run(t, new(ClientTestSuite))
 }
@@ -30,7 +30,7 @@ func (suite *ClientTestSuite) SetupTest() {
 }
 
 // TestSuccessfulUserFetch tests that a user can be fetched when
-// everything was set up properly
+// everything was set up properly.
 func (suite *ClientTestSuite) TestSuccessfulUserFetch() {
 	user, err := suite.client.Users.Fetch("BrandonRRomano")
 
@@ -41,7 +41,7 @@ func (suite *ClientTestSuite) TestSuccessfulUserFetch() {
 }
 
 // TestNotFoundUserFetch tests that a 404 is appropriately thrown
-// when fetching a user that does not exist
+// when fetching a user that does not exist.
 func (suite *ClientTestSuite) TestNotFoundUserFetch() {
 	// Hopefully nobody ever makes this user
 	_, err := suite.client.Users.Fetch("E20450921CE")

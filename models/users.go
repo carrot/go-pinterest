@@ -4,6 +4,8 @@ import (
 	"github.com/joeshaw/iso8601"
 )
 
+// User is a struct that represents an individual user
+// from the Pinterest API.
 type User struct {
 	Id        string       `json:"id"`
 	Username  string       `json:"username"`
@@ -32,5 +34,3 @@ type UserCounts struct {
 	Boards    int32 `json:"boards"`
 	Likes     int32 `json:"likes"`
 }
-
-
