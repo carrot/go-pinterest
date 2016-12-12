@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 )
 
 // In order for 'go test' to run this suite, we need to create
@@ -19,20 +20,26 @@ func TestClientTestSuite(t *testing.T) {
 // A test suite for all of our tests against our Client
 type ClientTestSuite struct {
 	suite.Suite
-	client      *pinterest.Client
-	spoofClient *pinterest.Client
+	client             *pinterest.Client
+	unauthorizedClient *pinterest.Client
+	timeoutClient      *pinterest.Client
 }
 
 // SetupTest sets up our test suite.  All this really does is build us
 // a client that is fed our AccessToken.
 func (suite *ClientTestSuite) SetupTest() {
+	// Create Standard Client
 	suite.client = pinterest.NewClient().
 		RegisterAccessToken(os.Getenv("PINTEREST_ACCESS_TOKEN"))
-	suite.spoofClient = pinterest.NewSpoofClient()
-}
 
-func (suite *ClientTestSuite) TestSpoofClient() {
-	suite.spoofClient.Users.Fetch("BrandonRRomano")
+	// Create client without any AccessToken
+	suite.unauthorizedClient = pinterest.NewClient()
+
+	// Create a timeout client that can never make a request
+	// (simulates no network connection)
+	suite.timeoutClient = pinterest.NewClient().SetHttpClient(&http.Client{
+		Timeout: 1 * time.Nanosecond,
+	})
 }
 
 // TestSuccessfulUserFetch tests that a user can be fetched when
@@ -60,6 +67,29 @@ func (suite *ClientTestSuite) TestNotFoundUserFetch() {
 	if pinterestError, ok := err.(*models.PinterestError); ok {
 		// Should be a 404
 		assert.Equal(suite.T(), http.StatusNotFound, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutUserFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutUserFetch() {
+	_, err := suite.timeoutClient.Users.Fetch("BrandonRRomano")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedUserFetch tests that an error is appropriately thrown
+// when the user makes an unauthorized request
+func (suite *ClientTestSuite) TestUnauthorizedUserFetch() {
+	_, err := suite.unauthorizedClient.Users.Fetch("BrandonRRomano")
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
 	} else {
 		// Make this error out, should always be a PinterestError
 		assert.Equal(suite.T(), true, false)

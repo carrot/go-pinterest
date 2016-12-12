@@ -38,21 +38,6 @@ func NewClient() *Client {
 	return pinterestClient
 }
 
-func NewSpoofClient() *Client {
-	pinterestClient := &Client{
-		wreckerClient: &wrecker.Wrecker{
-			BaseURL: "https://api.pinterest.com/v1",
-			HttpClient: &http.Client{
-				Timeout: 0, // WAY TOO QUICK
-			},
-			DefaultContentType: "application/json",
-			RequestInterceptor: nil,
-		},
-	}
-	pinterestClient.Users = controllers.NewUsersController(pinterestClient.wreckerClient)
-	return pinterestClient
-}
-
 // RegisterAccessToken registers an AccessToken on an existing Client.
 // All following requests made with the Client will be authorized with
 // the specified AccessToken.
@@ -61,5 +46,11 @@ func (pc *Client) RegisterAccessToken(accessToken string) *Client {
 		req.URLParam("access_token", accessToken)
 		return nil
 	}
+	return pc
+}
+
+// SetHttpClient sets the underlying http.Client that runs all API requests
+func (pc *Client) SetHttpClient(client *http.Client) *Client {
+	pc.wreckerClient.HttpClient = client
 	return pc
 }
