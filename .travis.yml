@@ -6,3 +6,5 @@ before_install:
   - go get github.com/Masterminds/glide
 install:
   - $HOME/gopath/bin/glide install
+script:
+  - go test
