@@ -42,7 +42,9 @@ func NewSpoofClient() *Client {
 	pinterestClient := &Client{
 		wreckerClient: &wrecker.Wrecker{
 			BaseURL: "https://api.pinterest.com/v1",
-			HttpClient: nil,
+			HttpClient: &http.Client{
+				Timeout: 1, // WAY TOO QUICK
+			},
 			DefaultContentType: "application/json",
 			RequestInterceptor: nil,
 		},
