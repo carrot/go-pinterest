@@ -13,3 +13,6 @@ vendor/*
 # IntelliJ
 *.iml
 .idea/*
+
+# Compiled files
+pinterest-go-client
