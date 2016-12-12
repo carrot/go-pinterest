@@ -19,7 +19,8 @@ func TestClientTestSuite(t *testing.T) {
 // A test suite for all of our tests against our Client
 type ClientTestSuite struct {
 	suite.Suite
-	client *pinterest.Client
+	client      *pinterest.Client
+	spoofClient *pinterest.Client
 }
 
 // SetupTest sets up our test suite.  All this really does is build us
@@ -27,6 +28,11 @@ type ClientTestSuite struct {
 func (suite *ClientTestSuite) SetupTest() {
 	suite.client = pinterest.NewClient().
 		RegisterAccessToken(os.Getenv("PINTEREST_ACCESS_TOKEN"))
+	suite.client = pinterest.NewSpoofClient()
+}
+
+func (suite *ClientTestSuite) TestSpoofClient() {
+	suite.spoofClient.Users.Fetch("BrandonRRomano")
 }
 
 // TestSuccessfulUserFetch tests that a user can be fetched when

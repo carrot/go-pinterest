@@ -38,6 +38,21 @@ func NewClient() *Client {
 	return pinterestClient
 }
 
+func NewSpoofClient() *Client {
+	pinterestClient := &Client{
+		wreckerClient: &wrecker.Wrecker{
+			BaseURL: "",
+			HttpClient: &http.Client{
+				Timeout: 10 * time.Second,
+			},
+			DefaultContentType: "application/json",
+			RequestInterceptor: nil,
+		},
+	}
+	pinterestClient.Users = controllers.NewUsersController(pinterestClient.wreckerClient)
+	return pinterestClient
+}
+
 // RegisterAccessToken registers an AccessToken on an existing Client.
 // All following requests made with the Client will be authorized with
 // the specified AccessToken.
