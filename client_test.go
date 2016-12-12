@@ -48,6 +48,7 @@ func (suite *ClientTestSuite) TestNotFoundUserFetch() {
 
 	// Assume there is an error
 	assert.NotEqual(suite.T(), nil, err)
+	assert.Equal(suite.T(), err.Error(), "PinterestError: {\"status_code\":404,\"message\":\"User not found.\"}")
 
 	// Check error type
 	if pinterestError, ok := err.(*models.PinterestError); ok {
