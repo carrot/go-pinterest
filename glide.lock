@@ -1,8 +1,6 @@
 hash: b32ac80970f9e4eebaf28551d747f8779f866bf77fe85097cb8c75e1eb2faa11
 updated: 2016-12-12T13:20:09.827855536-05:00
 imports:
-- name: github.com/brandonromano/wrecker
-  version: ""
 - name: github.com/BrandonRomano/wrecker
   version: 865df73aff7fe087936e4d397dd5368784394a75
 - name: github.com/joeshaw/iso8601
