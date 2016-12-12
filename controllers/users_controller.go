@@ -35,7 +35,6 @@ func (uc *UsersController) Fetch(user string) (*models.User, error) {
 		return nil, &models.PinterestError{
 			StatusCode: resp.StatusCode,
 			Message:    response.Message,
-			Type:       response.Type,
 		}
 	}
 

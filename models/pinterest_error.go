@@ -7,7 +7,6 @@ import (
 type PinterestError struct {
 	StatusCode int    `json:"status_code"`
 	Message    string `json:"message"`
-	Type       string `json:"type"`
 }
 
 func (e *PinterestError) Error() string {
