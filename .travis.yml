@@ -2,3 +2,7 @@ language: go
 go:
   - 1.6
   - master
+before_install:
+  - go get github.com/Masterminds/glide
+script:
+  - $HOME/gopath/bin/glide install
