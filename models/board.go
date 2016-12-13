@@ -11,18 +11,11 @@ type Board struct {
 	Name        string       `json:"name"`
 	Url         string       `json:"url"`
 	Description string       `json:"description"`
-	Creator     BoardCreator `json:"creator"`
+	Creator     Creator      `json:"creator"`
 	CreatedAt   iso8601.Time `json:"created_at"`
 	Counts      BoardCounts  `json:"counts"`
 	Image       Images       `json:"image"`
 	Privacy     string       `json:"privacy"`
-}
-
-type BoardCreator struct {
-	Url       string `json:"url"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Id        string `json:"id"`
 }
 
 type BoardCounts struct {
