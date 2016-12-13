@@ -14,17 +14,7 @@ type User struct {
 	Bio       string       `json:"bio"`
 	CreatedAt iso8601.Time `json:"created_at"`
 	Counts    UserCounts   `json:"counts"`
-	Image     UserImages   `json:"image"`
-}
-
-type UserImages struct {
-	Size_60x60 string `60x60`
-}
-
-type Image struct {
-	Url    string `json:"url"`
-	Width  int32  `json:"width"`
-	Height int32  `json:"height"`
+	Image     Images       `json:"image"`
 }
 
 type UserCounts struct {
