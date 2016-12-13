@@ -2,6 +2,7 @@ package main_test
 
 import (
 	pinterest "github.com/carrot/go-pinterest"
+	"github.com/carrot/go-pinterest/controllers"
 	"github.com/carrot/go-pinterest/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -107,7 +108,7 @@ func (suite *ClientTestSuite) TestUnauthorizedUserFetch() {
 // TestSuccessfulBoardFetch tests that a board can be fetched when
 // everything was set up properly.
 func (suite *ClientTestSuite) TestSuccessfulBoardFetch() {
-	board, err := suite.client.Boards.Fetch("BrandonRRomano", "go-pinterest")
+	board, err := suite.client.Boards.Fetch("BrandonRRomano/go-pinterest")
 
 	// Assume there is no error
 	assert.Equal(suite.T(), nil, err)
@@ -120,7 +121,7 @@ func (suite *ClientTestSuite) TestSuccessfulBoardFetch() {
 // when fetching a board that does not exist.
 func (suite *ClientTestSuite) TestNotFoundBoardFetch() {
 	// Fetch board that doesn't exist
-	_, err := suite.client.Boards.Fetch("BrandonRRomano", "E20450921CE")
+	_, err := suite.client.Boards.Fetch("BrandonRRomano/E20450921CE")
 
 	// Assume there is an error
 	assert.NotEqual(suite.T(), nil, err)
@@ -138,14 +139,14 @@ func (suite *ClientTestSuite) TestNotFoundBoardFetch() {
 // TestTimeoutBoardFetch tests that an error is appropriately thrown
 // when a network timeout occurs
 func (suite *ClientTestSuite) TestTimeoutBoardFetch() {
-	_, err := suite.timeoutClient.Boards.Fetch("BrandonRRomano", "go-pinterest")
+	_, err := suite.timeoutClient.Boards.Fetch("BrandonRRomano/go-pinterest")
 	assert.NotEqual(suite.T(), nil, err)
 }
 
 // TestUnauthorizedBoardFetch tests that an error is appropriately thrown
 // when the user makes an unauthorized request
 func (suite *ClientTestSuite) TestUnauthorizedBoardFetch() {
-	_, err := suite.unauthorizedClient.Boards.Fetch("BrandonRRomano", "go-pinterest")
+	_, err := suite.unauthorizedClient.Boards.Fetch("BrandonRRomano/go-pinterest")
 	assert.NotEqual(suite.T(), nil, err)
 
 	// Check error type
@@ -156,4 +157,217 @@ func (suite *ClientTestSuite) TestUnauthorizedBoardFetch() {
 		// Make this error out, should always be a PinterestError
 		assert.Equal(suite.T(), true, false)
 	}
+}
+
+// ==================================
+// ========== Boards.Create =========
+// ==================================
+
+// TestBadRequestBoardCreate tests that an error is appropriately thrown
+// when a board is attempted to be created without a name
+func (suite *ClientTestSuite) TestBadRequestBoardCreate() {
+	_, err := suite.client.Boards.Create("", &controllers.BoardCreateOptionals{})
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 400
+		assert.Equal(suite.T(), http.StatusBadRequest, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutBoardCreate tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutBoardCreate() {
+	_, err := suite.timeoutClient.Boards.Create("Some Board", &controllers.BoardCreateOptionals{})
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedBoardCreate tests that an error is appropriately thrown
+// when the user makes an unauthorized request
+func (suite *ClientTestSuite) TestUnauthorizedBoardCreate() {
+	_, err := suite.unauthorizedClient.Boards.Create("Some Board", &controllers.BoardCreateOptionals{})
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ==================================
+// ========== Boards.Update =========
+// ==================================
+
+// TestTimeoutBoardUpdate tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutBoardUpdate() {
+	_, err := suite.timeoutClient.Boards.Update("brandonrromano/go-pinterest-test", &controllers.BoardUpdateOptionals{})
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedBoardUpdate tests that an error is appropriately thrown
+// when the user makes an unauthorized request
+func (suite *ClientTestSuite) TestUnauthorizedBoardUpdate() {
+	_, err := suite.unauthorizedClient.Boards.Update("brandonrromano/go-pinterest-test", &controllers.BoardUpdateOptionals{})
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestForbiddenBoardUpdate tests that you may not update boards
+// that do not belong to you.
+func (suite *ClientTestSuite) TestForbiddenBoardUpdate() {
+	// Try to update Pinterests board!
+	_, err := suite.client.Boards.Update("pinterest/pinterest-100-for-2017",
+		&controllers.BoardUpdateOptionals{
+			Name: "Hello World!",
+		},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestNotFoundBoardUpdate tests that you may not update boards
+// that do not exist.
+func (suite *ClientTestSuite) TestNotFoundBoardUpdate() {
+	// Try to update Pinterests board!
+	_, err := suite.client.Boards.Update("BrandonRRomano/E20450921CE",
+		&controllers.BoardUpdateOptionals{
+			Name: "Hello World!",
+		},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 404
+		assert.Equal(suite.T(), http.StatusNotFound, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ==================================
+// ========== Boards.Delete =========
+// ==================================
+
+// TestUnauthorizedBoardDelete tests that an error is appropriately thrown
+// when the user makes an unauthorized request
+func (suite *ClientTestSuite) TestUnauthorizedBoardDelete() {
+	err := suite.unauthorizedClient.Boards.Delete("brandonrromano/go-pinterest")
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutBoardDelete tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutBoardDelete() {
+	err := suite.timeoutClient.Boards.Delete("brandonrromano/go-pinterest")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestNotFoundBoardDelete tests that an error is appropriately thrown
+// when trying to delete a board that does not exist
+func (suite *ClientTestSuite) TestNotFoundBoardDelete() {
+	// Try to update Pinterests board!
+	err := suite.client.Boards.Delete("BrandonRRomano/E20450921CE")
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 404
+		assert.Equal(suite.T(), http.StatusNotFound, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestNotFoundBoardDelete tests that an error is appropriately thrown
+// when trying to delete a board that does not belong to the user
+func (suite *ClientTestSuite) TestForbiddenBoardDelete() {
+	// Try to update Pinterests board!
+	err := suite.client.Boards.Delete("pinterest/pinterest-100-for-2017")
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// =====================================================
+// ========== Boards.Create / Update / Delete ==========
+// =====================================================
+
+// TestSuccessfulBoardCUD tests the successful flow of creating a board,
+// updating a board, and then deleting that board.  These are all done together
+// as there is no guarantee of order
+func (suite *ClientTestSuite) TestSuccessfulBoardCUD() {
+	// Creating the Board
+	board, err := suite.client.Boards.Create("Go Pinterest Test",
+		&controllers.BoardCreateOptionals{
+			Description: "Go Pinterest Test!",
+		},
+	)
+
+	// Assume there is no error / test result
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), board.Name, "Go Pinterest Test")
+	assert.Equal(suite.T(), board.Description, "Go Pinterest Test!")
+	assert.Equal(suite.T(), board.Creator.FirstName, "Brandon")
+	assert.Equal(suite.T(), board.Creator.LastName, "Romano")
+
+	// Updating the Board
+	board, err = suite.client.Boards.Update("brandonrromano/go-pinterest-test",
+		&controllers.BoardUpdateOptionals{
+			Name:        "Go Pinterest Test2",
+			Description: "Go Pinterest Test2!",
+		},
+	)
+
+	// Assume there is no error / test result
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), board.Name, "Go Pinterest Test2")
+	assert.Equal(suite.T(), board.Description, "Go Pinterest Test2!")
+
+	// Deleting the board
+	err = suite.client.Boards.Delete("brandonrromano/go-pinterest-test2")
+	assert.Equal(suite.T(), nil, err)
 }

@@ -9,7 +9,7 @@ owners:
   email: BrandonRRomano@gmail.com
 import:
 - package: github.com/BrandonRomano/wrecker
-  version: v0.1.1
+  version: v0.1.2
 - package: github.com/joeshaw/iso8601
 testImport:
 - package: github.com/stretchr/testify

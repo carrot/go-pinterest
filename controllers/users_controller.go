@@ -35,7 +35,7 @@ func (uc *UsersController) Fetch(username string) (*models.User, error) {
 	}
 
 	// Status code
-	if resp.StatusCode != 200 {
+	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
 		return nil, &models.PinterestError{
 			StatusCode: resp.StatusCode,
 			Message:    response.Message,
