@@ -1,10 +1,22 @@
-hash: b32ac80970f9e4eebaf28551d747f8779f866bf77fe85097cb8c75e1eb2faa11
-updated: 2016-12-12T13:20:09.827855536-05:00
+hash: 5db6940816b43a92a95963326441db51b74ecdd898b2ee7896977113b2c39eb9
+updated: 2016-12-12T22:19:00.863500493-05:00
 imports:
 - name: github.com/BrandonRomano/wrecker
   version: 865df73aff7fe087936e4d397dd5368784394a75
 - name: github.com/joeshaw/iso8601
   version: 861d1ce636d058f8544e10ee3d2371e061484775
-- name: github.com/julienschmidt/httprouter
-  version: 5dd70ee059943e81987a817fa1a755b11dd119c1
-devImports: []
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert
+  - require
+  - suite

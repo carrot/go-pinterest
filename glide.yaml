@@ -1,5 +1,16 @@
 package: github.com/carrot/go-pinterest
+homepage: https://github.com/carrot/go-pinterest
+license: MIT
+owners:
+- name: Carrot Creative
+  email: hello@carrot.is
+  homepage: https://carrot.is
+- name: Brandon Romano
+  email: BrandonRRomano@gmail.com
 import:
 - package: github.com/BrandonRomano/wrecker
   version: v0.1.1
 - package: github.com/joeshaw/iso8601
+testImport:
+- package: github.com/stretchr/testify
+  version: v1.1.4
