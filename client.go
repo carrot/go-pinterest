@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/BrandonRomano/wrecker"
-	"github.com/carrot/pinterest-go-client/controllers"
+	"github.com/carrot/go-pinterest/controllers"
 	"net/http"
 	"time"
 )
@@ -46,5 +46,11 @@ func (pc *Client) RegisterAccessToken(accessToken string) *Client {
 		req.URLParam("access_token", accessToken)
 		return nil
 	}
+	return pc
+}
+
+// SetHttpClient sets the underlying http.Client that runs all API requests
+func (pc *Client) SetHttpClient(client *http.Client) *Client {
+	pc.wreckerClient.HttpClient = client
 	return pc
 }

@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/BrandonRomano/wrecker"
-	"github.com/carrot/pinterest-go-client/models"
+	"github.com/carrot/go-pinterest/models"
 )
 
 // UsersController is the controller that is responsible for all

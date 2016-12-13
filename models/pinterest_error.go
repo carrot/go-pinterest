@@ -12,9 +12,6 @@ type PinterestError struct {
 }
 
 func (e *PinterestError) Error() string {
-	out, err := json.Marshal(e)
-	if err != nil {
-		panic(err)
-	}
+	out, _ := json.Marshal(e)
 	return "PinterestError: " + string(out)
 }
