@@ -391,6 +391,24 @@ func (suite *ClientTestSuite) TestSuccessfulBoardPinsFetch() {
 	assert.Equal(suite.T(), firstPin.Creator.FirstName, "Brandon")
 }
 
+// TestNotFoundBoardPinsFetch tests that a 404 is thrown
+// when trying to access the pins of a board that does not exist
+func (suite *ClientTestSuite) TestNotFoundBoardPinsFetch() {
+	_, err := suite.client.BoardPins.Fetch(
+		"BrandonRRomano/E20450921CE",
+		&controllers.BoardPinsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 404
+		assert.Equal(suite.T(), http.StatusNotFound, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
 
 // TestTimeoutBoardPinsFetch tests that an error is appropriately thrown
 // when a network timeout occurs
