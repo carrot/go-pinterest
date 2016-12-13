@@ -18,6 +18,7 @@ import (
 // check out https://developers.pinterest.com/
 type Client struct {
 	Users         *controllers.UsersController
+	Boards        *controllers.BoardsController
 	wreckerClient *wrecker.Wrecker
 }
 
@@ -35,6 +36,7 @@ func NewClient() *Client {
 		},
 	}
 	pinterestClient.Users = controllers.NewUsersController(pinterestClient.wreckerClient)
+	pinterestClient.Boards = controllers.NewBoardsController(pinterestClient.wreckerClient)
 	return pinterestClient
 }
 
