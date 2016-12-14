@@ -5,16 +5,19 @@ import (
 	"github.com/carrot/go-pinterest/models"
 )
 
+// TODO doc
 type PinsController struct {
 	wreckerClient *wrecker.Wrecker
 }
 
+// TODO doc
 func NewPinsController(wc *wrecker.Wrecker) *PinsController {
 	return &PinsController{
 		wreckerClient: wc,
 	}
 }
 
+// TODO doc
 func (pc *PinsController) Fetch(pinId string) (*models.Pin, error) {
 	// Make request
 	response := new(models.Response)
@@ -40,4 +43,27 @@ func (pc *PinsController) Fetch(pinId string) (*models.Pin, error) {
 
 	// OK
 	return response.Data.(*models.Pin), nil
+}
+
+type CreatePinOptionals struct {
+	Link        string
+	Image       string // TODO: file
+	ImageUrl    string
+	ImageBase64 string // TODO: better structure
+}
+
+// TODO doc
+func (pc *PinsController) Create(pinId string, note string, optionals *CreatePinOptionals) (*models.Pin, error) {
+	return nil, nil
+}
+
+// TODO doc
+func (pc *PinsController) Update(pinId string) (*models.Pin, error) {
+	return nil, nil
+}
+
+// TODO doc
+func (pc *PinsController) Delete(pinId string) error {
+	// TODO impl
+	return nil, nil
 }
