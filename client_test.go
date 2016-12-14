@@ -496,3 +496,41 @@ func (suite *ClientTestSuite) TestUnauthorizedPinsFetch() {
 		assert.Equal(suite.T(), true, false)
 	}
 }
+
+// ===================================================
+// ========== Pins.Create / Update / Delete ==========
+// ===================================================
+
+func (suite *ClientTestSuite) TestSuccessfulPinCUD() {
+	// Create a Pin
+	pin, err := suite.client.Pins.Create(
+		"brandonrromano/go-pinterest-2",
+		"This is a cat",
+		&controllers.PinCreateOptionals{
+			Link:     "http://www.google.com/",
+			ImageUrl: "http://i.imgur.com/1olmVpO.jpg",
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), "This is a cat", pin.Note)
+	assert.Equal(suite.T(), "http://www.google.com/", pin.OriginalLink)
+	assert.NotEqual(suite.T(), "", pin.Image.Original.Url)
+
+	// Update the Pin
+	pin, err = suite.client.Pins.Update(
+		pin.Id,
+		&controllers.PinUpdateOptionals{
+			Board: "brandonrromano/go-pinterest",
+			Note:  "This is a new cat",
+			Link:  "http://www.facebook.com/",
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), "This is a new cat", pin.Note)
+	assert.Equal(suite.T(), "http://www.facebook.com/", pin.OriginalLink)
+	assert.Equal(suite.T(), "Go Pinterest!", pin.Board.Name)
+
+	// Delete the Pin
+	err = suite.client.Pins.Delete(pin.Id)
+	assert.Equal(suite.T(), nil, err)
+}
