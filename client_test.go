@@ -438,3 +438,61 @@ func (suite *ClientTestSuite) TestUnauthorizedBoardPinsFetch() {
 		assert.Equal(suite.T(), true, false)
 	}
 }
+
+// ================================
+// ========== Pins.Fetch ==========
+// ================================
+
+// TestSuccessfulPinsFetch tests that Pins can be fetched when
+// everything is set up appropriately
+func (suite *ClientTestSuite) TestSuccessfulPinsFetch() {
+	pin, err := suite.client.Pins.Fetch("192880796521721688")
+
+	// Assume no error
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), "Go Pinterest!", pin.Board.Name)
+	assert.Equal(suite.T(), "The Go Gopher - The Go Blog", pin.Note)
+	assert.Equal(suite.T(), "Brandon", pin.Creator.FirstName)
+	assert.Equal(suite.T(), "Romano", pin.Creator.LastName)
+}
+
+// TestNotFoundPinsFetch tests that a 404 is thrown when we try
+// to call Fetch on a pin that doesn't exist
+func (suite *ClientTestSuite) TestNotFoundPinsFetch() {
+	_, err := suite.client.Pins.Fetch("9999999991234")
+
+	// Check that there's an error
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 404
+		assert.Equal(suite.T(), http.StatusNotFound, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutPinsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutPinsFetch() {
+	_, err := suite.timeoutClient.Pins.Fetch("192880796521721688")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedPinsFetch tests that an error is appropriately thrown
+// when the user makes an unauthorized request
+func (suite *ClientTestSuite) TestUnauthorizedPinsFetch() {
+	_, err := suite.unauthorizedClient.Pins.Fetch("192880796521721688")
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
