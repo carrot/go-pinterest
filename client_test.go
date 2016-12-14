@@ -438,3 +438,263 @@ func (suite *ClientTestSuite) TestUnauthorizedBoardPinsFetch() {
 		assert.Equal(suite.T(), true, false)
 	}
 }
+
+// ================================
+// ========== Pins.Fetch ==========
+// ================================
+
+// TestSuccessfulPinsFetch tests that Pins can be fetched when
+// everything is set up appropriately
+func (suite *ClientTestSuite) TestSuccessfulPinsFetch() {
+	pin, err := suite.client.Pins.Fetch("192880796521721688")
+
+	// Assume no error
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), "Go Pinterest!", pin.Board.Name)
+	assert.Equal(suite.T(), "The Go Gopher - The Go Blog", pin.Note)
+	assert.Equal(suite.T(), "Brandon", pin.Creator.FirstName)
+	assert.Equal(suite.T(), "Romano", pin.Creator.LastName)
+}
+
+// TestNotFoundPinsFetch tests that a 404 is thrown when we try
+// to call Fetch on a pin that doesn't exist
+func (suite *ClientTestSuite) TestNotFoundPinsFetch() {
+	_, err := suite.client.Pins.Fetch("9999999991234")
+
+	// Check that there's an error
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 404
+		assert.Equal(suite.T(), http.StatusNotFound, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutPinsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutPinsFetch() {
+	_, err := suite.timeoutClient.Pins.Fetch("192880796521721688")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedPinsFetch tests that an error is appropriately thrown
+// when the user makes an unauthorized request
+func (suite *ClientTestSuite) TestUnauthorizedPinsFetch() {
+	_, err := suite.unauthorizedClient.Pins.Fetch("192880796521721688")
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ===================================================
+// ========== Pins.Create / Update / Delete ==========
+// ===================================================
+
+// TestSuccessfulPinCUD tests that a pin can be created, updated,
+// and deleted when called appropriately.
+func (suite *ClientTestSuite) TestSuccessfulPinCUD() {
+	// Create a Pin
+	pin, err := suite.client.Pins.Create(
+		"brandonrromano/go-pinterest-2",
+		"This is a cat",
+		&controllers.PinCreateOptionals{
+			Link:     "http://www.google.com/",
+			ImageUrl: "http://i.imgur.com/1olmVpO.jpg",
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), "This is a cat", pin.Note)
+	assert.Equal(suite.T(), "http://www.google.com/", pin.OriginalLink)
+	assert.NotEqual(suite.T(), "", pin.Image.Original.Url)
+
+	// Update the Pin
+	pin, err = suite.client.Pins.Update(
+		pin.Id,
+		&controllers.PinUpdateOptionals{
+			Board: "brandonrromano/go-pinterest",
+			Note:  "This is a new cat",
+			Link:  "http://www.facebook.com/",
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), "This is a new cat", pin.Note)
+	assert.Equal(suite.T(), "http://www.facebook.com/", pin.OriginalLink)
+	assert.Equal(suite.T(), "Go Pinterest!", pin.Board.Name)
+
+	// Delete the Pin
+	err = suite.client.Pins.Delete(pin.Id)
+	assert.Equal(suite.T(), nil, err)
+}
+
+// =================================
+// ========== Pins.Create ==========
+// =================================
+
+// TestUnauthorizedPinCreate tests that a 401 error is thrown when
+// a user is unauthorized and tries to update a pin
+func (suite *ClientTestSuite) TestUnauthorizedPinCreate() {
+	_, err := suite.unauthorizedClient.Pins.Create(
+		"brandonrromano/go-pinterest",
+		"Some note, wow",
+		&controllers.PinCreateOptionals{
+			ImageUrl: "http://i.imgur.com/1olmVpO.jpg",
+		},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestForbiddenPinCreate tests that a 401 error is thrown
+// when a user is trying to update a pin that doesn't belong to them
+func (suite *ClientTestSuite) TestForbiddenPinCreate() {
+	_, err := suite.client.Pins.Create(
+		"pinterest/pinterest-100-for-2017",
+		"Some note, wow",
+		&controllers.PinCreateOptionals{
+			ImageUrl: "http://i.imgur.com/1olmVpO.jpg",
+		},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutPinsCreate tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutPinsCreate() {
+	_, err := suite.timeoutClient.Pins.Create(
+		"pinterest/pinterest-100-for-2017",
+		"Some note, wow",
+		&controllers.PinCreateOptionals{
+			ImageUrl: "http://i.imgur.com/1olmVpO.jpg",
+		},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// =================================
+// ========== Pins.Update ==========
+// =================================
+
+// TestUnauthorizedPinUpdate tests that a 401 is thrown when a
+// user isn't authorized and tries to update a pin
+func (suite *ClientTestSuite) TestUnauthorizedPinUpdate() {
+	_, err := suite.unauthorizedClient.Pins.Update(
+		"192880796521721688",
+		&controllers.PinUpdateOptionals{
+			Note: "Hello Update!",
+		},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestUnauthorizedPinUpdate tests that a 401 is thrown when a
+// user tries to update a pin that doesn't belong to them
+func (suite *ClientTestSuite) TestForbiddenPinUpdate() {
+	_, err := suite.client.Pins.Update(
+		"424605071105031783",
+		&controllers.PinUpdateOptionals{
+			Note: "Hello Update!",
+		},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutPinUpdate tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutPinUpdate() {
+	_, err := suite.timeoutClient.Pins.Update(
+		"192880796521721688",
+		&controllers.PinUpdateOptionals{
+			Note: "Hello Update!",
+		},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// =================================
+// ========== Pins.Delete ==========
+// =================================
+
+// TestUnauthorizedPinDelete tests that a 401 is thrown when a user tries to delete
+// a pin when they aren't authorized
+func (suite *ClientTestSuite) TestUnauthorizedPinDelete() {
+	err := suite.unauthorizedClient.Pins.Delete("192880796521721688")
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestForbiddenPinDelete tests that a 401 is thrown when a user tries to delete
+// a pin that doesn't belong to them.
+func (suite *ClientTestSuite) TestForbiddenPinDelete() {
+	err := suite.client.Pins.Delete("424605071105031783")
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutPinDelete tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutPinDelete() {
+	err := suite.timeoutClient.Pins.Delete("192880796521721688")
+	assert.NotEqual(suite.T(), nil, err)
+}
