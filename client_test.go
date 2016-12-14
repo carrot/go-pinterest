@@ -371,3 +371,70 @@ func (suite *ClientTestSuite) TestSuccessfulBoardCUD() {
 	err = suite.client.Boards.Delete("brandonrromano/go-pinterest-test2")
 	assert.Equal(suite.T(), nil, err)
 }
+
+// =====================================
+// ========== BoardPins.Fetch ==========
+// =====================================
+
+// TestSuccessfulBoardPinsFetch tests that a boards pins can be
+// fetched when everything was set up properly.
+func (suite *ClientTestSuite) TestSuccessfulBoardPinsFetch() {
+	pins, err := suite.client.BoardPins.Fetch("BrandonRRomano/go-pinterest", &controllers.BoardPinsFetchOptionals{})
+
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*pins), 3)
+
+	firstPin := (*pins)[0]
+	assert.Equal(suite.T(), firstPin.Note, "Go Gopher Toy by Sean Tasdemir — Kickstarter")
+	assert.Equal(suite.T(), firstPin.Board.Name, "Go Pinterest!")
+	assert.Equal(suite.T(), firstPin.Creator.FirstName, "Brandon")
+	assert.Equal(suite.T(), firstPin.Creator.FirstName, "Brandon")
+}
+
+// TestNotFoundBoardPinsFetch tests that a 404 is thrown
+// when trying to access the pins of a board that does not exist
+func (suite *ClientTestSuite) TestNotFoundBoardPinsFetch() {
+	_, err := suite.client.BoardPins.Fetch(
+		"BrandonRRomano/E20450921CE",
+		&controllers.BoardPinsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 404
+		assert.Equal(suite.T(), http.StatusNotFound, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutBoardPinsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutBoardPinsFetch() {
+	_, err := suite.timeoutClient.BoardPins.Fetch(
+		"BrandonRRomano/go-pinterest",
+		&controllers.BoardPinsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedBoardPinsFetch tests that an error is appropriately thrown
+// when the user makes an unauthorized request
+func (suite *ClientTestSuite) TestUnauthorizedBoardPinsFetch() {
+	_, err := suite.unauthorizedClient.BoardPins.Fetch(
+		"BrandonRRomano/go-pinterest",
+		&controllers.BoardPinsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
