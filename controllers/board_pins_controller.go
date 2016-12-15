@@ -6,13 +6,12 @@ import (
 )
 
 // BoardPinsController is the controller that is responsible for all
-// board pin specific endpoints in the Pinterest API.
-// https://developers.pinterest.com/docs/api/pins/
+// /v1/boards/<board_spec:board>/pins/ endpoints in the Pinterest API.
 type BoardPinsController struct {
 	wreckerClient *wrecker.Wrecker
 }
 
-// NewBoardPinsController instantiates a new BoardsController.
+// NewBoardPinsController instantiates a new BoardPinsController.
 func NewBoardPinsController(wc *wrecker.Wrecker) *BoardPinsController {
 	return &BoardPinsController{
 		wreckerClient: wc,
@@ -26,6 +25,7 @@ type BoardPinsFetchOptionals struct {
 }
 
 // Fetch loads a board from the board_spec (username/board-slug)
+// Endpoint: [GET] /v1/boards/<board_spec:board>/pins/
 func (bpc *BoardPinsController) Fetch(boardSpec string, optionals *BoardPinsFetchOptionals) (*[]models.Pin, error) {
 	// Make request
 	response := new(models.Response)

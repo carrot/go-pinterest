@@ -6,8 +6,7 @@ import (
 )
 
 // BoardsController is the controller that is responsible for all
-// board specific endpoints in the Pinterest API.
-// https://developers.pinterest.com/docs/api/boards/
+// /v1/boards/ endpoints in the Pinterest API.
 type BoardsController struct {
 	wreckerClient *wrecker.Wrecker
 	Pins          *BoardPinsController
@@ -15,14 +14,14 @@ type BoardsController struct {
 
 // NewBoardsController instantiates a new BoardsController.
 func NewBoardsController(wc *wrecker.Wrecker) *BoardsController {
-	boardsController := &BoardsController{
+	return &BoardsController{
 		wreckerClient: wc,
+		Pins:          NewBoardPinsController(wc),
 	}
-	boardsController.Pins = NewBoardPinsController(wc)
-	return boardsController
 }
 
 // Fetch loads a board from the board_spec (username/board-slug)
+// Endpoint: [GET] /v1/boards/<board_spec:board>/
 func (bc *BoardsController) Fetch(boardSpec string) (*models.Board, error) {
 	// Make request
 	response := new(models.Response)
@@ -56,6 +55,7 @@ type BoardCreateOptionals struct {
 }
 
 // Create makes a new board
+// Endpoint: [POST] /v1/boards/
 func (bc *BoardsController) Create(boardName string, optionals *BoardCreateOptionals) (*models.Board, error) {
 	// Make request
 	response := new(models.Response)
@@ -92,6 +92,7 @@ type BoardUpdateOptionals struct {
 }
 
 // Update updates an existing board
+// Endpoint: [PATCH] /v1/boards/<board_spec:board>/
 func (bc *BoardsController) Update(boardSpec string, optionals *BoardUpdateOptionals) (*models.Board, error) {
 	// Make request
 	response := new(models.Response)
@@ -121,6 +122,7 @@ func (bc *BoardsController) Update(boardSpec string, optionals *BoardUpdateOptio
 }
 
 // Delete deletes an existing board
+// Endpoint: [DELETE] /v1/boards/<board_spec:board>/
 func (bc *BoardsController) Delete(boardSpec string) error {
 	// Make request
 	response := new(models.Response)

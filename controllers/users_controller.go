@@ -6,8 +6,7 @@ import (
 )
 
 // UsersController is the controller that is responsible for all
-// user specific endpoints in the Pinterest API.
-// https://developers.pinterest.com/docs/api/users
+// /v1/users/ endpoints in the Pinterest API.
 type UsersController struct {
 	wreckerClient *wrecker.Wrecker
 }
@@ -20,6 +19,7 @@ func NewUsersController(wc *wrecker.Wrecker) *UsersController {
 }
 
 // Fetch loads a user from their username.
+// Endpoint: [GET] /v1/users/<user>/
 func (uc *UsersController) Fetch(username string) (*models.User, error) {
 	response := new(models.Response)
 	response.Data = new(models.User)
