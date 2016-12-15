@@ -698,3 +698,40 @@ func (suite *ClientTestSuite) TestTimeoutPinDelete() {
 	err := suite.timeoutClient.Pins.Delete("192880796521721688")
 	assert.NotEqual(suite.T(), nil, err)
 }
+
+// ==============================
+// ========== Me.Fetch ==========
+// ==============================
+
+// TestSuccessfulMeFetch tests that a the logged in user can be
+// fetched when everything was set up properly.
+func (suite *ClientTestSuite) TestSuccessfulMeFetch() {
+	user, err := suite.client.Me.Fetch()
+
+	// Assume there is no error
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), user.FirstName, "Brandon")
+	assert.Equal(suite.T(), user.LastName, "Romano")
+}
+
+// TestUnauthorizedMeFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFetch() {
+	_, err := suite.unauthorizedClient.Me.Fetch()
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutMeFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFetch() {
+	_, err := suite.timeoutClient.Me.Fetch()
+	assert.NotEqual(suite.T(), nil, err)
+}
