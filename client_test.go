@@ -379,7 +379,7 @@ func (suite *ClientTestSuite) TestSuccessfulBoardCUD() {
 // TestSuccessfulBoardPinsFetch tests that a boards pins can be
 // fetched when everything was set up properly.
 func (suite *ClientTestSuite) TestSuccessfulBoardPinsFetch() {
-	pins, err := suite.client.BoardPins.Fetch("BrandonRRomano/go-pinterest", &controllers.BoardPinsFetchOptionals{})
+	pins, err := suite.client.Boards.Pins.Fetch("BrandonRRomano/go-pinterest", &controllers.BoardPinsFetchOptionals{})
 
 	assert.Equal(suite.T(), nil, err)
 	assert.Equal(suite.T(), len(*pins), 3)
@@ -394,7 +394,7 @@ func (suite *ClientTestSuite) TestSuccessfulBoardPinsFetch() {
 // TestNotFoundBoardPinsFetch tests that a 404 is thrown
 // when trying to access the pins of a board that does not exist
 func (suite *ClientTestSuite) TestNotFoundBoardPinsFetch() {
-	_, err := suite.client.BoardPins.Fetch(
+	_, err := suite.client.Boards.Pins.Fetch(
 		"BrandonRRomano/E20450921CE",
 		&controllers.BoardPinsFetchOptionals{},
 	)
@@ -413,7 +413,7 @@ func (suite *ClientTestSuite) TestNotFoundBoardPinsFetch() {
 // TestTimeoutBoardPinsFetch tests that an error is appropriately thrown
 // when a network timeout occurs
 func (suite *ClientTestSuite) TestTimeoutBoardPinsFetch() {
-	_, err := suite.timeoutClient.BoardPins.Fetch(
+	_, err := suite.timeoutClient.Boards.Pins.Fetch(
 		"BrandonRRomano/go-pinterest",
 		&controllers.BoardPinsFetchOptionals{},
 	)
@@ -423,7 +423,7 @@ func (suite *ClientTestSuite) TestTimeoutBoardPinsFetch() {
 // TestUnauthorizedBoardPinsFetch tests that an error is appropriately thrown
 // when the user makes an unauthorized request
 func (suite *ClientTestSuite) TestUnauthorizedBoardPinsFetch() {
-	_, err := suite.unauthorizedClient.BoardPins.Fetch(
+	_, err := suite.unauthorizedClient.Boards.Pins.Fetch(
 		"BrandonRRomano/go-pinterest",
 		&controllers.BoardPinsFetchOptionals{},
 	)

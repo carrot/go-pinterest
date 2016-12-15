@@ -10,13 +10,16 @@ import (
 // https://developers.pinterest.com/docs/api/boards/
 type BoardsController struct {
 	wreckerClient *wrecker.Wrecker
+	Pins          *BoardPinsController
 }
 
 // NewBoardsController instantiates a new BoardsController.
 func NewBoardsController(wc *wrecker.Wrecker) *BoardsController {
-	return &BoardsController{
+	boardsController := &BoardsController{
 		wreckerClient: wc,
 	}
+	boardsController.Pins = NewBoardPinsController(wc)
+	return boardsController
 }
 
 // Fetch loads a board from the board_spec (username/board-slug)
