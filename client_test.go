@@ -735,3 +735,41 @@ func (suite *ClientTestSuite) TestTimeoutMeFetch() {
 	_, err := suite.timeoutClient.Me.Fetch()
 	assert.NotEqual(suite.T(), nil, err)
 }
+
+// =====================================
+// ========== Me.Boards.Fetch ==========
+// =====================================
+
+// TestSuccessfulMeBoardsFetch tests that the logged in user
+// can fetch their boards.
+func (suite *ClientTestSuite) TestSuccessfulMeBoardsFetch() {
+	boards, err := suite.client.Me.Boards.Fetch()
+
+	// Assume there is no error
+	assert.Equal(suite.T(), nil, err)
+	assert.True(suite.T(), (len(*boards) > 0))
+	assert.Equal(suite.T(), (*boards)[0].Creator.FirstName, "Brandon")
+	assert.Equal(suite.T(), (*boards)[0].Creator.LastName, "Romano")
+}
+
+// TestUnauthorizedMeBoardsFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeBoardsFetch() {
+	_, err := suite.unauthorizedClient.Me.Boards.Fetch()
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutMeBoardsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeBoardsFetch() {
+	_, err := suite.timeoutClient.Me.Boards.Fetch()
+	assert.NotEqual(suite.T(), nil, err)
+}
