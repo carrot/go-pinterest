@@ -19,7 +19,6 @@ import (
 type Client struct {
 	Users         *controllers.UsersController
 	Boards        *controllers.BoardsController
-	BoardPins     *controllers.BoardPinsController
 	Pins          *controllers.PinsController
 	wreckerClient *wrecker.Wrecker
 }
@@ -39,7 +38,6 @@ func NewClient() *Client {
 	}
 	pinterestClient.Users = controllers.NewUsersController(pinterestClient.wreckerClient)
 	pinterestClient.Boards = controllers.NewBoardsController(pinterestClient.wreckerClient)
-	pinterestClient.BoardPins = controllers.NewBoardPinsController(pinterestClient.wreckerClient)
 	pinterestClient.Pins = controllers.NewPinsController(pinterestClient.wreckerClient)
 	return pinterestClient
 }
