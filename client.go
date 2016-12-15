@@ -20,6 +20,7 @@ type Client struct {
 	Users         *controllers.UsersController
 	Boards        *controllers.BoardsController
 	Pins          *controllers.PinsController
+	Me            *controllers.MeController
 	wreckerClient *wrecker.Wrecker
 }
 
@@ -42,6 +43,7 @@ func NewClient() *Client {
 		Users:         controllers.NewUsersController(wc),
 		Boards:        controllers.NewBoardsController(wc),
 		Pins:          controllers.NewPinsController(wc),
+		Me:            controllers.NewMeController(wc),
 	}
 }
 

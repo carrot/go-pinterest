@@ -379,7 +379,7 @@ func (suite *ClientTestSuite) TestSuccessfulBoardCUD() {
 // TestSuccessfulBoardPinsFetch tests that a boards pins can be
 // fetched when everything was set up properly.
 func (suite *ClientTestSuite) TestSuccessfulBoardPinsFetch() {
-	pins, err := suite.client.Boards.Pins.Fetch("BrandonRRomano/go-pinterest", &controllers.BoardPinsFetchOptionals{})
+	pins, err := suite.client.Boards.Pins.Fetch("BrandonRRomano/go-pinterest", &controllers.BoardsPinsFetchOptionals{})
 
 	assert.Equal(suite.T(), nil, err)
 	assert.Equal(suite.T(), len(*pins), 3)
@@ -396,7 +396,7 @@ func (suite *ClientTestSuite) TestSuccessfulBoardPinsFetch() {
 func (suite *ClientTestSuite) TestNotFoundBoardPinsFetch() {
 	_, err := suite.client.Boards.Pins.Fetch(
 		"BrandonRRomano/E20450921CE",
-		&controllers.BoardPinsFetchOptionals{},
+		&controllers.BoardsPinsFetchOptionals{},
 	)
 	assert.NotEqual(suite.T(), nil, err)
 
@@ -415,7 +415,7 @@ func (suite *ClientTestSuite) TestNotFoundBoardPinsFetch() {
 func (suite *ClientTestSuite) TestTimeoutBoardPinsFetch() {
 	_, err := suite.timeoutClient.Boards.Pins.Fetch(
 		"BrandonRRomano/go-pinterest",
-		&controllers.BoardPinsFetchOptionals{},
+		&controllers.BoardsPinsFetchOptionals{},
 	)
 	assert.NotEqual(suite.T(), nil, err)
 }
@@ -425,7 +425,7 @@ func (suite *ClientTestSuite) TestTimeoutBoardPinsFetch() {
 func (suite *ClientTestSuite) TestUnauthorizedBoardPinsFetch() {
 	_, err := suite.unauthorizedClient.Boards.Pins.Fetch(
 		"BrandonRRomano/go-pinterest",
-		&controllers.BoardPinsFetchOptionals{},
+		&controllers.BoardsPinsFetchOptionals{},
 	)
 	assert.NotEqual(suite.T(), nil, err)
 
