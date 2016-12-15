@@ -6,8 +6,7 @@ import (
 )
 
 // PinsController is the controller that is responsible for all
-// pin specific endpoints in the Pinterest API.
-// https://developers.pinterest.com/docs/api/pins/
+// /v1/pins/ endpoints in the Pinterest API.
 type PinsController struct {
 	wreckerClient *wrecker.Wrecker
 }
@@ -20,6 +19,7 @@ func NewPinsController(wc *wrecker.Wrecker) *PinsController {
 }
 
 // Fetch loads a pin from the pin id
+// Endpoint: [GET] /v1/pins/<pin>/
 func (pc *PinsController) Fetch(pinId string) (*models.Pin, error) {
 	// Make request
 	response := new(models.Response)
@@ -58,6 +58,7 @@ type PinCreateOptionals struct {
 }
 
 // Create creates a new pin
+// Endpoint: [POST] /v1/pins/
 func (pc *PinsController) Create(boardSpec string, note string, optionals *PinCreateOptionals) (*models.Pin, error) {
 	// Build Request
 	response := new(models.Response)
@@ -103,6 +104,7 @@ type PinUpdateOptionals struct {
 }
 
 // Update updates an existing pin
+// Endpoint: [PATCH] /v1/pins/<pin>/
 func (pc *PinsController) Update(pinId string, optionals *PinUpdateOptionals) (*models.Pin, error) {
 	// Build request
 	response := new(models.Response)
@@ -141,6 +143,7 @@ func (pc *PinsController) Update(pinId string, optionals *PinUpdateOptionals) (*
 }
 
 // Delete deletes an existing pin
+// Endpoint: [DELETE] /v1/pins/<pin>/
 func (pc *PinsController) Delete(pinId string) error {
 	// Execute Request
 	response := new(models.Response)

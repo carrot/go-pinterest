@@ -26,20 +26,23 @@ type Client struct {
 // NewClient generates a new instance of a Client, which will
 // allow you to interact with the Pinterest API.
 func NewClient() *Client {
-	pinterestClient := &Client{
-		wreckerClient: &wrecker.Wrecker{
-			BaseURL: "https://api.pinterest.com/v1",
-			HttpClient: &http.Client{
-				Timeout: 10 * time.Second,
-			},
-			DefaultContentType: "application/json",
-			RequestInterceptor: nil,
+	// Build Wrecker client
+	wc := &wrecker.Wrecker{
+		BaseURL: "https://api.pinterest.com/v1",
+		HttpClient: &http.Client{
+			Timeout: 10 * time.Second,
 		},
+		DefaultContentType: "application/json",
+		RequestInterceptor: nil,
 	}
-	pinterestClient.Users = controllers.NewUsersController(pinterestClient.wreckerClient)
-	pinterestClient.Boards = controllers.NewBoardsController(pinterestClient.wreckerClient)
-	pinterestClient.Pins = controllers.NewPinsController(pinterestClient.wreckerClient)
-	return pinterestClient
+
+	// Build Pinterest client
+	return &Client{
+		wreckerClient: wc,
+		Users:         controllers.NewUsersController(wc),
+		Boards:        controllers.NewBoardsController(wc),
+		Pins:          controllers.NewPinsController(wc),
+	}
 }
 
 // RegisterAccessToken registers an AccessToken on an existing Client.

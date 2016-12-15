@@ -4,6 +4,12 @@
 
 This is a Go client for the Pinterest API.  For more information about the Pinterest API, check out their [getting started](https://developers.pinterest.com/docs/api/overview/) guide.
 
+## Roadmap to v1.0.0
+
+Check out the [v1.0.0 milestone](https://github.com/carrot/go-pinterest/milestone/1)!
+
+Before we hit v1.0.0 you probably shouldn't be using this library. If you decide to use it be sure to lock into specific commit, as there are possibly breaking changes between commits without notice.
+
 ## License
 
 [MIT](LICENSE.md) © Carrot Creative
