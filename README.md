@@ -107,6 +107,12 @@ if pinterestError, ok := err.(*models.PinterestError); ok {
 
 ### Create a Board
 
+##### Endpoint
+
+`[POST] /v1/boards/`
+
+##### Sample
+
 ```go
 board, err := client.Boards.Create(
     "My Test Board",
@@ -118,11 +124,23 @@ board, err := client.Boards.Create(
 
 ### Delete a Board
 
+##### Endpoint
+
+`[DELETE] /v1/boards/<board_spec:board>/`
+
+##### Sample
+
 ```go
 err := client.Boards.Delete("BrandonRRomano/go-pinterest-test")
 ```
 
 ### Edit a Board
+
+##### Endpoint
+
+`[PATCH] /v1/boards/<board_spec:board>/`
+
+##### Sample
 
 ```go
 board, err := client.Boards.Update(
@@ -136,11 +154,23 @@ board, err := client.Boards.Update(
 
 ### Retrieve information about a Board
 
+##### Endpoint
+
+`[GET] /v1/boards/<board_spec:board>/`
+
+##### Sample
+
 ```go
 board, err := client.Boards.Fetch("BrandonRRomano/go-pinterest")
 ```
 
 ### Retrieve the Pins on a Board
+
+##### Endpoint
+
+`[GET] /v1/boards/<board_spec:board>/pins/`
+
+##### Sample
 
 ```go
 pins, err := client.Boards.Pins.Fetch(
