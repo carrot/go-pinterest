@@ -990,3 +990,27 @@ func (suite *ClientTestSuite) TestSuccessfulMeFollowingBoardsCD() {
 	err = suite.client.Me.Following.Boards.Delete("pinterest/pinterest-100-for-2017")
 	assert.Equal(suite.T(), nil, err)
 }
+
+// ============================================
+// ========== Me.Following.Interests ==========
+// ============================================
+
+// TestSuccessfulMeFollowingInterestsFetch tests that an authorized
+// user can fetch their interests
+func (suite *ClientTestSuite) TestSuccessfulMeFollowingInterestsFetch() {
+	// Load first page
+	interests, page, err := suite.client.Me.Following.Interests.Fetch(
+		&controllers.MeFollowingInterestsFetchOptionals{},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*interests), 25)
+
+	// Load second page
+	interests, page, err = suite.client.Me.Following.Interests.Fetch(
+		&controllers.MeFollowingInterestsFetchOptionals{
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.True(suite.T(), len(*interests) > 0)
+}

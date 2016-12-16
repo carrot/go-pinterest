@@ -4,7 +4,7 @@ import (
 	"github.com/joeshaw/iso8601"
 )
 
-// User is a struct that represents an individual board
+// Board is a struct that represents an individual board
 // from the Pinterest API.
 type Board struct {
 	Id          string       `json:"id"`
