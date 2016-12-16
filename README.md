@@ -10,6 +10,29 @@ Check out the [v1.0.0 milestone](https://github.com/carrot/go-pinterest/mileston
 
 Before we hit v1.0.0 you probably shouldn't be using this library. If you decide to use it be sure to lock into specific commit, as there are possibly breaking changes between commits without notice.
 
+## Creating a Client
+
+To create a simple Pinterest client:
+
+```go
+import pinterest "github.com/carrot/go-pinterest"
+
+func main() {
+    client := pinterest.NewClient()
+}
+```
+
+To create an authenticated Pinterest client you can just chain the `RegisterAccessToken` method:
+
+```go
+import pinterest "github.com/carrot/go-pinterest"
+
+func main() {
+    client := pinterest.NewClient().
+        RegisterAccessToken("USERS_ACCESS_TOKEN")
+}
+```
+
 ## License
 
 [MIT](LICENSE.md) © Carrot Creative
