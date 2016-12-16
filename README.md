@@ -61,11 +61,11 @@ All required parameters to the Pinterest API's methods will be parameters in the
 
 ## Handling Errors
 
-For all requests made via this library, there is the possibility of the API throwing an error.
+For all requests made via this library, there is the possibility of the Pinterest API throwing an error.
 
 When the API does throw an error, this library makes it very easy to handle it.
 
-If the error came from Pinterest (and not the *http.Client) this library wraps it in a custom error, PinterestError:
+If the error came from Pinterest (and not the [http.Client](https://golang.org/pkg/net/http/#Client)) this library wraps it in a custom error, PinterestError:
 
 ```go
 type PinterestError struct {
