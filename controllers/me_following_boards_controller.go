@@ -57,10 +57,59 @@ func (mfbc *MeFollowingBoardsController) Fetch(optionals *MeFollowingBoardsFetch
 	return response.Data.(*[]models.Board), &response.Page, nil
 }
 
-func (*MeFollowingBoardsController) Create() {
-	// TODO
+// Create follows a board for the authorized user
+// Endpoint: [POST] /v1/me/following/boards/
+func (mfbc *MeFollowingBoardsController) Create(boardSpec string) error {
+	// Build request
+	response := new(models.Response)
+	request := mfbc.wreckerClient.Post("/me/following/boards/").
+		FormParam("board", boardSpec).
+		Into(response)
+
+	// Execute request
+	resp, err := request.Execute()
+
+	// Error from Wrecker
+	if err != nil {
+		return err
+	}
+
+	// Status code
+	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
+		return &models.PinterestError{
+			StatusCode: resp.StatusCode,
+			Message:    response.Message,
+		}
+	}
+
+	// OK
+	return nil
 }
 
-func (*MeFollowingBoardsController) Delete() {
-	// TODO
+// Delete unfollows a board for the authorized user
+// Endpoint: [DELETE] /v1/me/following/boards/
+func (mfbc *MeFollowingBoardsController) Delete(boardSpec string) error {
+	// Build request
+	response := new(models.Response)
+	request := mfbc.wreckerClient.Delete("/me/following/boards/" + boardSpec + "/").
+		Into(response)
+
+	// Execute request
+	resp, err := request.Execute()
+
+	// Error from Wrecker
+	if err != nil {
+		return err
+	}
+
+	// Status code
+	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
+		return &models.PinterestError{
+			StatusCode: resp.StatusCode,
+			Message:    response.Message,
+		}
+	}
+
+	// OK
+	return nil
 }

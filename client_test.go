@@ -873,9 +873,9 @@ func (suite *ClientTestSuite) TestUnauthorizedMeFollowersFetch() {
 	}
 }
 
-// ========================================
-// ========== Me.Following.Fetch ==========
-// ========================================
+// ===============================================
+// ========== Me.Following.Boards.Fetch ==========
+// ===============================================
 
 // TestSuccessfulMeFollowingBoardsFetch tests that we can fetch
 // users that an authorized user follows.
@@ -921,4 +921,72 @@ func (suite *ClientTestSuite) TestUnauthorizedFollowingBoardsFetch() {
 		// Make this error out, should always be a PinterestError
 		assert.Equal(suite.T(), true, false)
 	}
+}
+
+// ===============================================
+// ========== Me.Following.Boards.Create =========
+// ===============================================
+
+// TestTimeoutMeFollowingBoardsCreate tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowingBoardsCreate() {
+	err := suite.timeoutClient.Me.Following.Boards.Create("pinterest/pinterest-100-for-2017")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeFollowingBoardsCreate tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFollowingBoardsCreate() {
+	err := suite.unauthorizedClient.Me.Following.Boards.Create("pinterest/pinterest-100-for-2017")
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ===============================================
+// ========== Me.Following.Boards.Delete =========
+// ===============================================
+
+// TestTimeoutMeFollowingBoardsDelete tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowingBoardsDelete() {
+	err := suite.timeoutClient.Me.Following.Boards.Delete("pinterest/pinterest-100-for-2017")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeFollowingBoardsDelete tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFollowingBoardsDelete() {
+	err := suite.unauthorizedClient.Me.Following.Boards.Delete("pinterest/pinterest-100-for-2017")
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// =========================================================
+// ========== Me.Following.Boards.Create / Delete ==========
+// =========================================================
+
+// TestSuccessfulMeFollowingBoardsCD tests that a board can be followed
+// and unfollowed by an authorized user
+func (suite *ClientTestSuite) TestSuccessfulMeFollowingBoardsCD() {
+	// Follow a board
+	err := suite.client.Me.Following.Boards.Create("pinterest/pinterest-100-for-2017")
+	assert.Equal(suite.T(), nil, err)
+
+	// Unfollow a board
+	err = suite.client.Me.Following.Boards.Delete("pinterest/pinterest-100-for-2017")
+	assert.Equal(suite.T(), nil, err)
 }
