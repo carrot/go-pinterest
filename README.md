@@ -163,6 +163,111 @@ pins, err := client.Boards.Pins.Fetch(
 
 ## Me Endpoints
 
+### Return the logged in user's information
+
+`[GET] /v1/me/`
+
+```go
+```
+
+### Return the logged in user's Boards
+
+`[GET] /v1/me/boards/`
+
+```go
+```
+
+### Return Board suggestions for the logged in user
+
+`[GET] /v1/me/boards/suggested/`
+
+```go
+```
+
+### Return the users that follow the logged in user
+
+`[GET] /v1/me/followers/`
+
+```go
+```
+
+### Get the Boards that the logged in user follows
+
+`[GET] /v1/me/following/boards/`
+
+```go
+```
+
+### Follow a Board
+
+`[POST] /v1/me/following/boards/`
+
+```go
+```
+
+### Unfollow a Board
+
+`[DELETE] /v1/me/following/boards/<board_spec:board>/`
+
+```go
+```
+
+### Return the Interests the logged in user follows
+
+`[GET] /v1/me/following/interests/`
+
+```go
+```
+
+### Return the users that the logged in user follows
+
+`[GET] /v1/me/following/users/`
+
+```go
+```
+
+### Follow a user
+
+`[POST] /v1/me/following/users/`
+
+```go
+```
+
+### Unfollow a user
+
+`[DELETE] /v1/me/following/users/<user>/`
+
+```go
+```
+
+### Return Pins that the logged in user has liked
+
+`[GET] /v1/me/likes/`
+
+```go
+```
+
+### Return the logged in user's Pins
+
+`[GET] /v1/me/pins/`
+
+```go
+```
+
+### Search the logged in user's Boards
+
+`[GET] /v1/me/search/boards/`
+
+```go
+```
+
+### Search the logged in user's Pins
+
+`[GET] /v1/me/search/pins/`
+
+```go
+```
+
 ## Pins Endpoints
 
 ### Create a Pin
@@ -194,6 +299,13 @@ pins, err := client.Boards.Pins.Fetch(
 ```
 
 ## Users Endpoints
+
+### Return a user's information
+
+`[GET] /v1/users/<user>/`
+
+```go
+```
 
 ## License
 
