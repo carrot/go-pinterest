@@ -275,6 +275,14 @@ pins, err := client.Boards.Pins.Fetch(
 `[POST] /v1/pins/`
 
 ```go
+pin, err := client.Pins.Create(
+    "BrandonRRomano/go-pinterest-2",
+    "This is a cat",
+    &controllers.PinCreateOptionals{
+        Link:     "http://www.google.com/",
+        ImageUrl: "http://i.imgur.com/1olmVpO.jpg",
+    },
+)
 ```
 
 ### Delete a Pin
@@ -282,6 +290,7 @@ pins, err := client.Boards.Pins.Fetch(
 `[DELETE] /v1/pins/<pin>/`
 
 ```go
+err := client.Pins.Delete("some-pin-id")
 ```
 
 ### Edit a Pin's information
@@ -289,6 +298,14 @@ pins, err := client.Boards.Pins.Fetch(
 `[PATCH] /v1/pins/<pin>/`
 
 ```go
+pin, err := client.Pins.Update(
+    "some-pin-id",
+    &controllers.PinUpdateOptionals{
+        Board: "BrandonRRomano/go-pinterest",
+        Note:  "This is a new cat",
+        Link:  "http://www.facebook.com/",
+    },
+)
 ```
 
 ### Return information about a Pin
@@ -296,6 +313,7 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/pins/<pin>/`
 
 ```go
+pin, err := client.Pins.Fetch("some-pin-id")
 ```
 
 ## Users Endpoints
@@ -305,6 +323,7 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/users/<user>/`
 
 ```go
+user, err := client.Users.Fetch("BrandonRRomano")
 ```
 
 ## License
