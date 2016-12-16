@@ -107,11 +107,7 @@ if pinterestError, ok := err.(*models.PinterestError); ok {
 
 ### Create a Board
 
-##### Endpoint
-
 `[POST] /v1/boards/`
-
-##### Sample
 
 ```go
 board, err := client.Boards.Create(
@@ -124,11 +120,7 @@ board, err := client.Boards.Create(
 
 ### Delete a Board
 
-##### Endpoint
-
 `[DELETE] /v1/boards/<board_spec:board>/`
-
-##### Sample
 
 ```go
 err := client.Boards.Delete("BrandonRRomano/go-pinterest-test")
@@ -136,11 +128,7 @@ err := client.Boards.Delete("BrandonRRomano/go-pinterest-test")
 
 ### Edit a Board
 
-##### Endpoint
-
 `[PATCH] /v1/boards/<board_spec:board>/`
-
-##### Sample
 
 ```go
 board, err := client.Boards.Update(
@@ -154,11 +142,7 @@ board, err := client.Boards.Update(
 
 ### Retrieve information about a Board
 
-##### Endpoint
-
 `[GET] /v1/boards/<board_spec:board>/`
-
-##### Sample
 
 ```go
 board, err := client.Boards.Fetch("BrandonRRomano/go-pinterest")
@@ -166,11 +150,7 @@ board, err := client.Boards.Fetch("BrandonRRomano/go-pinterest")
 
 ### Retrieve the Pins on a Board
 
-##### Endpoint
-
 `[GET] /v1/boards/<board_spec:board>/pins/`
-
-##### Sample
 
 ```go
 pins, err := client.Boards.Pins.Fetch(
@@ -184,6 +164,34 @@ pins, err := client.Boards.Pins.Fetch(
 ## Me Endpoints
 
 ## Pins Endpoints
+
+### Create a Pin
+
+`[POST] /v1/pins/`
+
+```go
+```
+
+### Delete a Pin
+
+`[DELETE] /v1/pins/<pin>/`
+
+```go
+```
+
+### Edit a Pin's information
+
+`[PATCH] /v1/pins/<pin>/`
+
+```go
+```
+
+### Return information about a Pin
+
+`[GET] /v1/pins/<pin>/`
+
+```go
+```
 
 ## Users Endpoints
 
