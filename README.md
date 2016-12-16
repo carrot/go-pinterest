@@ -15,7 +15,12 @@ Before we hit v1.0.0 you probably shouldn't be using this library. If you decide
 To create a simple Pinterest client:
 
 ```go
-import pinterest "github.com/carrot/go-pinterest"
+import(
+    pinterest "github.com/carrot/go-pinterest"
+    // Below imports aren't needed immediately, but you'll want these soon after
+	"github.com/carrot/go-pinterest/controllers"
+	"github.com/carrot/go-pinterest/models"
+)
 
 func main() {
     client := pinterest.NewClient()
@@ -25,7 +30,12 @@ func main() {
 To create an authenticated Pinterest client you can just chain the `RegisterAccessToken` method:
 
 ```go
-import pinterest "github.com/carrot/go-pinterest"
+import(
+    pinterest "github.com/carrot/go-pinterest"
+    // Below imports aren't needed immediately, but you'll want these soon after
+	"github.com/carrot/go-pinterest/controllers"
+	"github.com/carrot/go-pinterest/models"
+)
 
 func main() {
     client := pinterest.NewClient().
@@ -94,6 +104,52 @@ if pinterestError, ok := err.(*models.PinterestError); ok {
 ```
 
 ## Boards Endpoints
+
+### Create a Board
+
+```go
+board, err := client.Boards.Create(
+    "My Test Board",
+    &controllers.BoardCreateOptionals{
+        Description: "This is a test!",
+    },
+)
+```
+
+### Delete a Board
+
+```go
+err := client.Boards.Delete("BrandonRRomano/go-pinterest-test")
+```
+
+### Edit a Board
+
+```go
+board, err := client.Boards.Update(
+    "BrandonRRomano/go-pinterest-test",
+    &controllers.BoardUpdateOptionals{
+        Name:        "Some new name",
+        Description: "Some new description",
+    },
+)
+```
+
+### Retrieve information about a Board
+
+```go
+board, err := client.Boards.Fetch("BrandonRRomano/go-pinterest")
+```
+
+### Retrieve the Pins on a Board
+
+```go
+pins, err := client.Boards.Pins.Fetch(
+    "BrandonRRomano/go-pinterest",
+    &controllers.BoardPinsFetchOptionals{
+        Cursor: "some-cursor-from-pinterest",
+    },
+)
+```
 
 ## Me Endpoints
 
