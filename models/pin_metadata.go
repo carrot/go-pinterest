@@ -69,7 +69,7 @@ type Product struct {
 
 type ProductOffer struct {
 	Price   string `json:"price"`
-	InStock bool   `json:"true"`
+	InStock bool   `json:"in_stock"`
 }
 
 // ========== Meta: Recipe ==========

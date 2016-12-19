@@ -5,28 +5,28 @@ import (
 	"github.com/carrot/go-pinterest/models"
 )
 
-// BoardPinsController is the controller that is responsible for all
+// BoardsPinsController is the controller that is responsible for all
 // /v1/boards/<board_spec:board>/pins/ endpoints in the Pinterest API.
-type BoardPinsController struct {
+type BoardsPinsController struct {
 	wreckerClient *wrecker.Wrecker
 }
 
-// NewBoardPinsController instantiates a new BoardPinsController.
-func NewBoardPinsController(wc *wrecker.Wrecker) *BoardPinsController {
-	return &BoardPinsController{
+// newBoardsPinsController instantiates a new BoardsPinsController.
+func newBoardsPinsController(wc *wrecker.Wrecker) *BoardsPinsController {
+	return &BoardsPinsController{
 		wreckerClient: wc,
 	}
 }
 
-// BoardPinsFetchOptionals is a struct that represents the optional parameters
+// BoardsPinsFetchOptionals is a struct that represents the optional parameters
 // that can be passed to the Fetch endpoint
-type BoardPinsFetchOptionals struct {
+type BoardsPinsFetchOptionals struct {
 	Cursor string
 }
 
 // Fetch loads a board from the board_spec (username/board-slug)
 // Endpoint: [GET] /v1/boards/<board_spec:board>/pins/
-func (bpc *BoardPinsController) Fetch(boardSpec string, optionals *BoardPinsFetchOptionals) (*[]models.Pin, error) {
+func (bpc *BoardsPinsController) Fetch(boardSpec string, optionals *BoardsPinsFetchOptionals) (*[]models.Pin, error) {
 	// Make request
 	response := new(models.Response)
 	response.Data = &[]models.Pin{}

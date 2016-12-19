@@ -379,7 +379,7 @@ func (suite *ClientTestSuite) TestSuccessfulBoardCUD() {
 // TestSuccessfulBoardPinsFetch tests that a boards pins can be
 // fetched when everything was set up properly.
 func (suite *ClientTestSuite) TestSuccessfulBoardPinsFetch() {
-	pins, err := suite.client.Boards.Pins.Fetch("BrandonRRomano/go-pinterest", &controllers.BoardPinsFetchOptionals{})
+	pins, err := suite.client.Boards.Pins.Fetch("BrandonRRomano/go-pinterest", &controllers.BoardsPinsFetchOptionals{})
 
 	assert.Equal(suite.T(), nil, err)
 	assert.Equal(suite.T(), len(*pins), 3)
@@ -396,7 +396,7 @@ func (suite *ClientTestSuite) TestSuccessfulBoardPinsFetch() {
 func (suite *ClientTestSuite) TestNotFoundBoardPinsFetch() {
 	_, err := suite.client.Boards.Pins.Fetch(
 		"BrandonRRomano/E20450921CE",
-		&controllers.BoardPinsFetchOptionals{},
+		&controllers.BoardsPinsFetchOptionals{},
 	)
 	assert.NotEqual(suite.T(), nil, err)
 
@@ -415,7 +415,7 @@ func (suite *ClientTestSuite) TestNotFoundBoardPinsFetch() {
 func (suite *ClientTestSuite) TestTimeoutBoardPinsFetch() {
 	_, err := suite.timeoutClient.Boards.Pins.Fetch(
 		"BrandonRRomano/go-pinterest",
-		&controllers.BoardPinsFetchOptionals{},
+		&controllers.BoardsPinsFetchOptionals{},
 	)
 	assert.NotEqual(suite.T(), nil, err)
 }
@@ -425,7 +425,7 @@ func (suite *ClientTestSuite) TestTimeoutBoardPinsFetch() {
 func (suite *ClientTestSuite) TestUnauthorizedBoardPinsFetch() {
 	_, err := suite.unauthorizedClient.Boards.Pins.Fetch(
 		"BrandonRRomano/go-pinterest",
-		&controllers.BoardPinsFetchOptionals{},
+		&controllers.BoardsPinsFetchOptionals{},
 	)
 	assert.NotEqual(suite.T(), nil, err)
 
@@ -697,4 +697,718 @@ func (suite *ClientTestSuite) TestForbiddenPinDelete() {
 func (suite *ClientTestSuite) TestTimeoutPinDelete() {
 	err := suite.timeoutClient.Pins.Delete("192880796521721688")
 	assert.NotEqual(suite.T(), nil, err)
+}
+
+// ==============================
+// ========== Me.Fetch ==========
+// ==============================
+
+// TestSuccessfulMeFetch tests that a the logged in user can be
+// fetched when everything was set up properly.
+func (suite *ClientTestSuite) TestSuccessfulMeFetch() {
+	user, err := suite.client.Me.Fetch()
+
+	// Assume there is no error
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), user.FirstName, "Brandon")
+	assert.Equal(suite.T(), user.LastName, "Romano")
+}
+
+// TestUnauthorizedMeFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFetch() {
+	_, err := suite.unauthorizedClient.Me.Fetch()
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutMeFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFetch() {
+	_, err := suite.timeoutClient.Me.Fetch()
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// =====================================
+// ========== Me.Boards.Fetch ==========
+// =====================================
+
+// TestSuccessfulMeBoardsFetch tests that the logged in user
+// can fetch their boards.
+func (suite *ClientTestSuite) TestSuccessfulMeBoardsFetch() {
+	boards, err := suite.client.Me.Boards.Fetch()
+
+	// Assume there is no error
+	assert.Equal(suite.T(), nil, err)
+	assert.True(suite.T(), (len(*boards) > 0))
+	assert.Equal(suite.T(), (*boards)[0].Creator.FirstName, "Brandon")
+	assert.Equal(suite.T(), (*boards)[0].Creator.LastName, "Romano")
+}
+
+// TestUnauthorizedMeBoardsFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeBoardsFetch() {
+	_, err := suite.unauthorizedClient.Me.Boards.Fetch()
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutMeBoardsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeBoardsFetch() {
+	_, err := suite.timeoutClient.Me.Boards.Fetch()
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// ===============================================
+// ========== Me.Boards.Suggested.Fetch ==========
+// ===============================================
+
+// TestSuccessfulMeBoardsSuggestedFetch tests that the logged in user
+// can fetch suggested boards.
+func (suite *ClientTestSuite) TestSuccessfulMeBoardsSuggestedFetch() {
+	// Test simple Fetch
+	boards, err := suite.client.Me.Boards.Suggested.Fetch(
+		&controllers.MeBoardsSuggestedFetchOptionals{},
+	)
+	assert.Equal(suite.T(), nil, err)
+
+	//  Test fetch w/ Count
+	boards, err = suite.client.Me.Boards.Suggested.Fetch(
+		&controllers.MeBoardsSuggestedFetchOptionals{
+			Count: 1,
+			Pin:   "192880796521721689",
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.True(suite.T(), (len(*boards) == 1))
+}
+
+// TestUnauthorizedMeBoardsSuggestedFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeBoardsSuggestedFetch() {
+	_, err := suite.unauthorizedClient.Me.Boards.Suggested.Fetch(
+		&controllers.MeBoardsSuggestedFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutMeBoardsSuggestedFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeBoardsSuggestedFetch() {
+	_, err := suite.timeoutClient.Me.Boards.Suggested.Fetch(
+		&controllers.MeBoardsSuggestedFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// ========================================
+// ========== Me.Followers.Fetch ==========
+// ========================================
+
+// TestSuccessfulMeFollowersFetch tests that we can fetch
+// followers of the authorized user.
+func (suite *ClientTestSuite) TestSuccessfulMeFollowersFetch() {
+	// Test simple fetch
+	users, page, err := suite.client.Me.Followers.Fetch(
+		&controllers.MeFollowersFetchOptionals{},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*users), 25)
+
+	// Load second page
+	users, page, err = suite.client.Me.Followers.Fetch(
+		&controllers.MeFollowersFetchOptionals{
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.True(suite.T(), len(*users) > 0)
+}
+
+// TestTimeoutMeFollowersFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowersFetch() {
+	_, _, err := suite.timeoutClient.Me.Followers.Fetch(
+		&controllers.MeFollowersFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeFollowersFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFollowersFetch() {
+	_, _, err := suite.unauthorizedClient.Me.Followers.Fetch(
+		&controllers.MeFollowersFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ===============================================
+// ========== Me.Following.Boards.Fetch ==========
+// ===============================================
+
+// TestSuccessfulMeFollowingBoardsFetch tests that we can fetch
+// users that an authorized user follows.
+func (suite *ClientTestSuite) TestSuccessfulMeFollowingBoardsFetch() {
+	// Test simple fetch
+	boards, page, err := suite.client.Me.Following.Boards.Fetch(
+		&controllers.MeFollowingBoardsFetchOptionals{},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*boards), 25)
+
+	// Load second page
+	boards, page, err = suite.client.Me.Following.Boards.Fetch(
+		&controllers.MeFollowingBoardsFetchOptionals{
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.True(suite.T(), len(*boards) > 0)
+}
+
+// TestTimeoutMeFollowingBoardsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowingBoardsFetch() {
+	_, _, err := suite.timeoutClient.Me.Following.Boards.Fetch(
+		&controllers.MeFollowingBoardsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedFollowingBoardsFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedFollowingBoardsFetch() {
+	_, _, err := suite.unauthorizedClient.Me.Following.Boards.Fetch(
+		&controllers.MeFollowingBoardsFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ===============================================
+// ========== Me.Following.Boards.Create =========
+// ===============================================
+
+// TestTimeoutMeFollowingBoardsCreate tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowingBoardsCreate() {
+	err := suite.timeoutClient.Me.Following.Boards.Create("pinterest/pinterest-100-for-2017")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeFollowingBoardsCreate tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFollowingBoardsCreate() {
+	err := suite.unauthorizedClient.Me.Following.Boards.Create("pinterest/pinterest-100-for-2017")
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ===============================================
+// ========== Me.Following.Boards.Delete =========
+// ===============================================
+
+// TestTimeoutMeFollowingBoardsDelete tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowingBoardsDelete() {
+	err := suite.timeoutClient.Me.Following.Boards.Delete("pinterest/pinterest-100-for-2017")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeFollowingBoardsDelete tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFollowingBoardsDelete() {
+	err := suite.unauthorizedClient.Me.Following.Boards.Delete("pinterest/pinterest-100-for-2017")
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// =========================================================
+// ========== Me.Following.Boards.Create / Delete ==========
+// =========================================================
+
+// TestSuccessfulMeFollowingBoardsCD tests that a board can be followed
+// and unfollowed by an authorized user
+func (suite *ClientTestSuite) TestSuccessfulMeFollowingBoardsCD() {
+	// Follow a board
+	err := suite.client.Me.Following.Boards.Create("pinterest/pinterest-100-for-2017")
+	assert.Equal(suite.T(), nil, err)
+
+	// Unfollow a board
+	err = suite.client.Me.Following.Boards.Delete("pinterest/pinterest-100-for-2017")
+	assert.Equal(suite.T(), nil, err)
+}
+
+// ==================================================
+// ========== Me.Following.Interests.Fetch ==========
+// ==================================================
+
+// TestSuccessfulMeFollowingInterestsFetch tests that an authorized
+// user can fetch their interests
+func (suite *ClientTestSuite) TestSuccessfulMeFollowingInterestsFetch() {
+	// Load first page
+	interests, page, err := suite.client.Me.Following.Interests.Fetch(
+		&controllers.MeFollowingInterestsFetchOptionals{},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*interests), 25)
+
+	// Load second page
+	interests, page, err = suite.client.Me.Following.Interests.Fetch(
+		&controllers.MeFollowingInterestsFetchOptionals{
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.True(suite.T(), len(*interests) > 0)
+}
+
+// TestTimeoutMeFollowingInterestsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowingInterestsFetch() {
+	// Load first page
+	_, _, err := suite.timeoutClient.Me.Following.Interests.Fetch(
+		&controllers.MeFollowingInterestsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeFollowingInterestsFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFollowingInterestsFetch() {
+	// Load first page
+	_, _, err := suite.unauthorizedClient.Me.Following.Interests.Fetch(
+		&controllers.MeFollowingInterestsFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ==============================================
+// ========== Me.Following.Users.Fetch ==========
+// ==============================================
+
+// TestSuccessfulMeFollowingUsersFetch tests that an authorized user
+// can fetch the users they are following
+func (suite *ClientTestSuite) TestSuccessfulMeFollowingUsersFetch() {
+	// Load first page
+	users, page, err := suite.client.Me.Following.Users.Fetch(
+		&controllers.FollowingUsersControllerFetchOptionals{},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*users), 25)
+
+	// Load second page
+	suite.client.Me.Following.Users.Fetch(
+		&controllers.FollowingUsersControllerFetchOptionals{
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.True(suite.T(), len(*users) > 0)
+}
+
+// TestTimeoutMeFollowingUsersFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowingUsersFetch() {
+	// Load first page
+	_, _, err := suite.timeoutClient.Me.Following.Users.Fetch(
+		&controllers.FollowingUsersControllerFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeFollowingUsersFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFollowingUsersFetch() {
+	// Load first page
+	_, _, err := suite.unauthorizedClient.Me.Following.Users.Fetch(
+		&controllers.FollowingUsersControllerFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ========================================================
+// ========== Me.Following.Users.Create / Delete ==========
+// ========================================================
+
+// TestSuccessfulMeFollowingUsersCD tests that we can follow and unfollow
+// a user when everything is set up properly
+func (suite *ClientTestSuite) TestSuccessfulMeFollowingUsersCD() {
+	// Follow a user
+	err := suite.client.Me.Following.Users.Create("hhsnopek")
+	assert.Equal(suite.T(), nil, err)
+
+	// Unfollow a user
+	err = suite.client.Me.Following.Users.Delete("hhsnopek")
+	assert.Equal(suite.T(), nil, err)
+}
+
+// ===============================================
+// ========== Me.Following.Users.Create ==========
+// ===============================================
+
+// TestNotFoundMeFollowingUsersCreate tests that a 404 is thrown when trying
+// to follow a user who doesn't exist
+func (suite *ClientTestSuite) TestNotFoundMeFollowingUsersCreate() {
+	// Follow a user
+	err := suite.client.Me.Following.Users.Create("E20450921CE")
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 404
+		assert.Equal(suite.T(), http.StatusNotFound, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutMeFollowingUsersCreate tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowingUsersCreate() {
+	err := suite.timeoutClient.Me.Following.Users.Create("hhsnopek")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeFollowingUsersCreate tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFollowingUsersCreate() {
+	err := suite.unauthorizedClient.Me.Following.Users.Create("hhsnopek")
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ===============================================
+// ========== Me.Following.Users.Delete ==========
+// ===============================================
+
+// TestNotFoundMeFollowingUsersDelete tests that a 404 is thrown when
+// we try to unfollow a user who doesn't exist
+func (suite *ClientTestSuite) TestNotFoundMeFollowingUsersDelete() {
+	err := suite.client.Me.Following.Users.Delete("E20450921CE")
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 404
+		assert.Equal(suite.T(), http.StatusNotFound, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// TestTimeoutMeFollowingUsersDelete tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowingUsersDelete() {
+	err := suite.timeoutClient.Me.Following.Users.Delete("hhsnopek")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeFollowingUsersDelete tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFollowingUsersDelete() {
+	err := suite.unauthorizedClient.Me.Following.Users.Delete("hhsnopek")
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ====================================
+// ========== Me.Likes.Fetch ==========
+// ====================================
+
+// TestSuccessfulMeLikesFetch tests that we can successfully fetch
+// the likes of the authorized user
+func (suite *ClientTestSuite) TestSuccessfulMeLikesFetch() {
+	// Load first page
+	pins, page, err := suite.client.Me.Likes.Fetch(
+		&controllers.MeLikesFetchOptionals{},
+	)
+	assert.Equal(suite.T(), nil, err)
+	firstPageFirstPinId := (*pins)[0].Id
+
+	// Load second page
+	pins, page, err = suite.client.Me.Likes.Fetch(
+		&controllers.MeLikesFetchOptionals{
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.NotEqual(suite.T(), firstPageFirstPinId, (*pins)[0].Id)
+}
+
+// TestTimeoutMeLikesFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeLikesFetch() {
+	_, _, err := suite.timeoutClient.Me.Likes.Fetch(
+		&controllers.MeLikesFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeLikesFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeLikesFetch() {
+	_, _, err := suite.unauthorizedClient.Me.Likes.Fetch(
+		&controllers.MeLikesFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ===================================
+// ========== Me.Pins.Fetch ==========
+// ===================================
+
+// TestSuccessfulMePinsFetch tests that we can successfully fetch
+// the pins of the authorized user
+func (suite *ClientTestSuite) TestSuccessfulMePinsFetch() {
+	// Load first page
+	pins, page, err := suite.client.Me.Pins.Fetch(
+		&controllers.MePinsFetchOptionals{},
+	)
+	assert.Equal(suite.T(), nil, err)
+	firstPageFirstPinId := (*pins)[0].Id
+
+	// Load second page
+	pins, page, err = suite.client.Me.Pins.Fetch(
+		&controllers.MePinsFetchOptionals{
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.NotEqual(suite.T(), firstPageFirstPinId, (*pins)[0].Id)
+}
+
+// TestTimeoutMePinsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMePinsFetch() {
+	_, _, err := suite.timeoutClient.Me.Pins.Fetch(
+		&controllers.MePinsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMePinsFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMePinsFetch() {
+	_, _, err := suite.unauthorizedClient.Me.Pins.Fetch(
+		&controllers.MePinsFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ============================================
+// ========== Me.Search.Boards.Fetch ==========
+// ============================================
+
+// TestSuccessfulMeSearchBoardsFetch tests that we can successfully search
+// the boards of the authorized user
+func (suite *ClientTestSuite) TestSuccessfulMeSearchBoardsFetch() {
+	// Load first page
+	boards, page, err := suite.client.Me.Search.Boards.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchBoardsFetchOptionals{
+			Limit: 1,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*boards), 1)
+	assert.Equal(suite.T(), "Go Pinterest!", (*boards)[0].Name)
+
+	// Load second page
+	boards, page, err = suite.client.Me.Search.Boards.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchBoardsFetchOptionals{
+			Limit:  1,
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*boards), 1)
+	assert.Equal(suite.T(), "Go Pinterest 2!", (*boards)[0].Name)
+}
+
+// TestTimeoutMeSearchBoardsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeSearchBoardsFetch() {
+	_, _, err := suite.timeoutClient.Me.Search.Boards.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchBoardsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeSearchBoardsFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeSearchBoardsFetch() {
+	_, _, err := suite.unauthorizedClient.Me.Search.Boards.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchBoardsFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ==========================================
+// ========== Me.Search.Pins.Fetch ==========
+// ==========================================
+
+// TestSuccessfulMeSearchPinsFetch tests that we can successfully search
+// the pins of the authorized user
+func (suite *ClientTestSuite) TestSuccessfulMeSearchPinsFetch() {
+	// Load first page
+	pins, page, err := suite.client.Me.Search.Pins.Fetch(
+		"Go Gopher",
+		&controllers.MeSearchPinsFetchOptionals{
+			Limit: 1,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), (*pins)[0].Note, "Go Gopher Toy by Sean Tasdemir — Kickstarter")
+	assert.Equal(suite.T(), len(*pins), 1)
+
+	// Load Second page
+	pins, page, err = suite.client.Me.Search.Pins.Fetch(
+		"Go Gopher",
+		&controllers.MeSearchPinsFetchOptionals{
+			Limit:  1,
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), (*pins)[0].Note, "The Go Gopher - The Go Blog")
+	assert.Equal(suite.T(), len(*pins), 1)
+}
+
+// TestTimeoutMeSearchPinsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeSearchPinsFetch() {
+	_, _, err := suite.timeoutClient.Me.Search.Pins.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchPinsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeSearchPinsFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeSearchPinsFetch() {
+	_, _, err := suite.unauthorizedClient.Me.Search.Pins.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchPinsFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
 }

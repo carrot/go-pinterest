@@ -9,14 +9,14 @@ import (
 // /v1/boards/ endpoints in the Pinterest API.
 type BoardsController struct {
 	wreckerClient *wrecker.Wrecker
-	Pins          *BoardPinsController
+	Pins          *BoardsPinsController
 }
 
 // NewBoardsController instantiates a new BoardsController.
 func NewBoardsController(wc *wrecker.Wrecker) *BoardsController {
 	return &BoardsController{
 		wreckerClient: wc,
-		Pins:          NewBoardPinsController(wc),
+		Pins:          newBoardsPinsController(wc),
 	}
 }
 
