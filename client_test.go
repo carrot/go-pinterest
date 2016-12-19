@@ -1016,6 +1016,34 @@ func (suite *ClientTestSuite) TestSuccessfulMeFollowingInterestsFetch() {
 	assert.True(suite.T(), len(*interests) > 0)
 }
 
+// TestTimeoutMeFollowingInterestsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeFollowingInterestsFetch() {
+	// Load first page
+	_, _, err := suite.timeoutClient.Me.Following.Interests.Fetch(
+		&controllers.MeFollowingInterestsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeFollowingInterestsFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeFollowingInterestsFetch() {
+	// Load first page
+	_, _, err := suite.unauthorizedClient.Me.Following.Interests.Fetch(
+		&controllers.MeFollowingInterestsFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
 // ==============================================
 // ========== Me.Following.Users.Fetch ==========
 // ==============================================
