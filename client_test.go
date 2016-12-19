@@ -31,7 +31,7 @@ type ClientTestSuite struct {
 func (suite *ClientTestSuite) SetupTest() {
 	// Create Standard Client
 	suite.client = pinterest.NewClient().
-	RegisterAccessToken(os.Getenv("PINTEREST_ACCESS_TOKEN"))
+		RegisterAccessToken(os.Getenv("PINTEREST_ACCESS_TOKEN"))
 
 	// Create client without any AccessToken
 	suite.unauthorizedClient = pinterest.NewClient()
@@ -1066,6 +1066,7 @@ func (suite *ClientTestSuite) TestUnauthorizedMeFollowingUsersFetch() {
 		assert.Equal(suite.T(), true, false)
 	}
 }
+
 // ========================================================
 // ========== Me.Following.Users.Create / Delete ==========
 // ========================================================
@@ -1149,6 +1150,7 @@ func (suite *ClientTestSuite) TestTimeoutMeFollowingUsersDelete() {
 	err := suite.timeoutClient.Me.Following.Users.Delete("hhsnopek")
 	assert.NotEqual(suite.T(), nil, err)
 }
+
 // TestUnauthorizedMeFollowingUsersDelete tests that a 401 is thrown
 // when an unauthorized user tries to call a /me endpoint
 func (suite *ClientTestSuite) TestUnauthorizedMeFollowingUsersDelete() {
