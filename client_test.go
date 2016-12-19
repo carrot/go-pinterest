@@ -1265,3 +1265,62 @@ func (suite *ClientTestSuite) TestUnauthorizedMePinsFetch() {
 		assert.Equal(suite.T(), true, false)
 	}
 }
+
+// ============================================
+// ========== Me.Search.Boards.Fetch ==========
+// ============================================
+
+// TestSuccessfulMeSearchBoardsFetch tests that we can successfully fetch
+// the pins of the authorized user
+func (suite *ClientTestSuite) TestSuccessfulMeSearchBoardsFetch() {
+	// Load first page
+	boards, page, err := suite.client.Me.Search.Boards.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchBoardsFetchOptionals{
+			Limit: 1,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*boards), 1)
+	assert.Equal(suite.T(), "Go Pinterest!", (*boards)[0].Name)
+
+	// Load second page
+	boards, page, err = suite.client.Me.Search.Boards.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchBoardsFetchOptionals{
+			Limit:  1,
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*boards), 1)
+	assert.Equal(suite.T(), "Go Pinterest 2!", (*boards)[0].Name)
+}
+
+// TestTimeoutMeSearchBoardsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeSearchBoardsFetch() {
+	_, _, err := suite.timeoutClient.Me.Search.Boards.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchBoardsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeSearchBoardsFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeSearchBoardsFetch() {
+	_, _, err := suite.unauthorizedClient.Me.Search.Boards.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchBoardsFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
