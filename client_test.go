@@ -1270,8 +1270,8 @@ func (suite *ClientTestSuite) TestUnauthorizedMePinsFetch() {
 // ========== Me.Search.Boards.Fetch ==========
 // ============================================
 
-// TestSuccessfulMeSearchBoardsFetch tests that we can successfully fetch
-// the pins of the authorized user
+// TestSuccessfulMeSearchBoardsFetch tests that we can successfully search
+// the boards of the authorized user
 func (suite *ClientTestSuite) TestSuccessfulMeSearchBoardsFetch() {
 	// Load first page
 	boards, page, err := suite.client.Me.Search.Boards.Fetch(
@@ -1313,6 +1313,65 @@ func (suite *ClientTestSuite) TestUnauthorizedMeSearchBoardsFetch() {
 	_, _, err := suite.unauthorizedClient.Me.Search.Boards.Fetch(
 		"Go Pinterest",
 		&controllers.MeSearchBoardsFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ==========================================
+// ========== Me.Search.Pins.Fetch ==========
+// ==========================================
+
+// TestSuccessfulMeSearchPinsFetch tests that we can successfully search
+// the pins of the authorized user
+func (suite *ClientTestSuite) TestSuccessfulMeSearchPinsFetch() {
+	// Load first page
+	pins, page, err := suite.client.Me.Search.Pins.Fetch(
+		"Go Gopher",
+		&controllers.MeSearchPinsFetchOptionals{
+			Limit: 1,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), (*pins)[0].Note, "Go Gopher Toy by Sean Tasdemir — Kickstarter")
+	assert.Equal(suite.T(), len(*pins), 1)
+
+	// Load Second page
+	pins, page, err = suite.client.Me.Search.Pins.Fetch(
+		"Go Gopher",
+		&controllers.MeSearchPinsFetchOptionals{
+			Limit:  1,
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), (*pins)[0].Note, "The Go Gopher - The Go Blog")
+	assert.Equal(suite.T(), len(*pins), 1)
+}
+
+// TestTimeoutMeSearchPinsFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeSearchPinsFetch() {
+	_, _, err := suite.timeoutClient.Me.Search.Pins.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchPinsFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeSearchPinsFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeSearchPinsFetch() {
+	_, _, err := suite.unauthorizedClient.Me.Search.Pins.Fetch(
+		"Go Pinterest",
+		&controllers.MeSearchPinsFetchOptionals{},
 	)
 
 	// Check error type
