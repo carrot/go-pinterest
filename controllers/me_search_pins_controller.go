@@ -27,6 +27,7 @@ type MeSearchPinsFetchOptionals struct {
 }
 
 // Fetch searches the logged in user's Pins
+// Endpoint: [GET] /v1/me/search/pins/
 func (mspc *MeSearchPinsController) Fetch(query string, optionals *MeSearchPinsFetchOptionals) (*[]models.Pin, *models.Page, error) {
 	// Build request
 	response := new(models.Response)

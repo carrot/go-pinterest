@@ -25,6 +25,7 @@ type MeFollowingInterestsFetchOptionals struct {
 }
 
 // Fetch loads the authorized users interests
+// Endpoint: [GET] /v1/me/following/interests/
 func (mfic *MeFollowingInterestsController) Fetch(optionals *MeFollowingInterestsFetchOptionals) (*[]models.Interest, *models.Page, error) {
 	// Build request
 	response := new(models.Response)

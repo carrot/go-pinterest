@@ -27,6 +27,7 @@ type MeSearchBoardsFetchOptionals struct {
 }
 
 // Fetch searches the logged in user's Boards
+// Endpoint: [GET] /v1/me/search/boards/
 func (msbc *MeSearchBoardsController) Fetch(query string, optionals *MeSearchBoardsFetchOptionals) (*[]models.Board, *models.Page, error) {
 	// Build request
 	response := new(models.Response)

@@ -25,6 +25,7 @@ type MePinsFetchOptionals struct {
 }
 
 // Fetch loads all of the logged in user's Pins
+// Endpoint: [GET] /v1/me/pins/
 func (mpc *MePinsController) Fetch(optionals *MePinsFetchOptionals) (*[]models.Pin, *models.Page, error) {
 	// Build request
 	response := new(models.Response)

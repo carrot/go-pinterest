@@ -12,7 +12,7 @@ type MeBoardsSuggestedController struct {
 	wreckerClient *wrecker.Wrecker
 }
 
-// newMeBoardsController instantiates a new MeBoardsController
+// newMeBoardsSuggestedController instantiates a new MeBoardsSuggestedController
 func newMeBoardsSuggestedController(wc *wrecker.Wrecker) *MeBoardsSuggestedController {
 	return &MeBoardsSuggestedController{
 		wreckerClient: wc,

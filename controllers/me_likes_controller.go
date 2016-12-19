@@ -25,6 +25,7 @@ type MeLikesFetchOptionals struct {
 }
 
 // Fetch loads all of the pins that the authorized user has liked
+// Endpoint: [GET] /v1/me/likes/
 func (mlc *MeLikesController) Fetch(optionals *MeLikesFetchOptionals) (*[]models.Pin, *models.Page, error) {
 	// Build request
 	response := new(models.Response)
