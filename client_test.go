@@ -791,6 +791,7 @@ func (suite *ClientTestSuite) TestSuccessfulMeBoardsSuggestedFetch() {
 	boards, err = suite.client.Me.Boards.Suggested.Fetch(
 		&controllers.MeBoardsSuggestedFetchOptionals{
 			Count: 1,
+			Pin:   "192880796521721689",
 		},
 	)
 	assert.Equal(suite.T(), nil, err)
