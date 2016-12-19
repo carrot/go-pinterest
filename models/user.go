@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/joeshaw/iso8601"
+	"github.com/BrandonRomano/iso8601"
 )
 
 // User is a struct that represents an individual user

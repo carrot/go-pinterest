@@ -1,10 +1,10 @@
-hash: 30415765adb7362ad82e90ec5ae5cb26d945d22de30c07fd3477b146f9fec305
-updated: 2016-12-13T13:36:16.476612224-05:00
+hash: 6aee64e4bf6af7189f78e89f3a62c42dce0517b50b0d4051a9e23ea0dc429855
+updated: 2016-12-19T18:00:01.357686216-05:00
 imports:
+- name: github.com/BrandonRomano/iso8601
+  version: 2ef8540f216c9c1c6768cbff3cfbbe7b0196c05e
 - name: github.com/BrandonRomano/wrecker
   version: 9c8c0ccbaee729b8e221dd640cce820748a0e339
-- name: github.com/joeshaw/iso8601
-  version: 861d1ce636d058f8544e10ee3d2371e061484775
 testImports:
 - name: github.com/davecgh/go-spew
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
