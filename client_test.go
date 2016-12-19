@@ -1165,3 +1165,53 @@ func (suite *ClientTestSuite) TestUnauthorizedMeFollowingUsersDelete() {
 		assert.Equal(suite.T(), true, false)
 	}
 }
+
+// ====================================
+// ========== Me.Likes.Fetch ==========
+// ====================================
+
+// TestSuccessfulMeLikesFetch tests that we can successfully fetch
+// the likes of the authorized user
+func (suite *ClientTestSuite) TestSuccessfulMeLikesFetch() {
+	// Load first page
+	pins, page, err := suite.client.Me.Likes.Fetch(
+		&controllers.MeLikesFetchOptionals{},
+	)
+	assert.Equal(suite.T(), nil, err)
+	firstPageFirstPinId := (*pins)[0].Id
+
+	// Load second page
+	pins, page, err = suite.client.Me.Likes.Fetch(
+		&controllers.MeLikesFetchOptionals{
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.NotEqual(suite.T(), firstPageFirstPinId, (*pins)[0].Id)
+}
+
+// TestTimeoutMeLikesFetch tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutMeLikesFetch() {
+	_, _, err := suite.timeoutClient.Me.Likes.Fetch(
+		&controllers.MeLikesFetchOptionals{},
+	)
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedMeLikesFetch tests that a 401 is thrown
+// when an unauthorized user tries to call a /me endpoint
+func (suite *ClientTestSuite) TestUnauthorizedMeLikesFetch() {
+	_, _, err := suite.unauthorizedClient.Me.Likes.Fetch(
+		&controllers.MeLikesFetchOptionals{},
+	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
