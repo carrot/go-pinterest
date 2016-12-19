@@ -168,6 +168,7 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/`
 
 ```go
+user, err := client.Me.Fetch()
 ```
 
 ### Return the logged in user's Boards
@@ -175,6 +176,7 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/boards/`
 
 ```go
+boards, err := client.Me.Boards.Fetch()
 ```
 
 ### Return Board suggestions for the logged in user
@@ -182,6 +184,12 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/boards/suggested/`
 
 ```go
+boards, err := client.Me.Boards.Suggested.Fetch(
+    &controllers.MeBoardsSuggestedFetchOptionals{
+        Count: 10,
+        Pin: "some-pin-id",
+    },
+)
 ```
 
 ### Return the users that follow the logged in user
@@ -189,6 +197,11 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/followers/`
 
 ```go
+users, page, err := client.Me.Followers.Fetch(
+    &controllers.MeFollowersFetchOptionals{
+        Cursor: "some-cursor",
+    },
+)
 ```
 
 ### Get the Boards that the logged in user follows
@@ -196,6 +209,11 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/following/boards/`
 
 ```go
+boards, page, err := client.Me.Following.Boards.Fetch(
+    &controllers.MeFollowingBoardsFetchOptionals{
+        Cursor: "some-cursor",
+    },
+)
 ```
 
 ### Follow a Board
@@ -203,6 +221,7 @@ pins, err := client.Boards.Pins.Fetch(
 `[POST] /v1/me/following/boards/`
 
 ```go
+err := client.Me.Following.Boards.Create("pinterest/pinterest-100-for-2017")
 ```
 
 ### Unfollow a Board
@@ -210,6 +229,7 @@ pins, err := client.Boards.Pins.Fetch(
 `[DELETE] /v1/me/following/boards/<board_spec:board>/`
 
 ```go
+err := client.Me.Following.Boards.Delete("pinterest/pinterest-100-for-2017")
 ```
 
 ### Return the Interests the logged in user follows
@@ -217,6 +237,11 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/following/interests/`
 
 ```go
+interests, page, err := client.Me.Following.Interests.Fetch(
+    &controllers.MeFollowingInterestsFetchOptionals{
+        Cursor: "some-cursor",
+    },
+)
 ```
 
 ### Return the users that the logged in user follows
@@ -224,6 +249,11 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/following/users/`
 
 ```go
+users, page, err := client.Me.Following.Users.Fetch(
+    &controllers.FollowingUsersControllerFetchOptionals{
+        Cursor: "some-cursor",
+    },
+)
 ```
 
 ### Follow a user
@@ -231,6 +261,7 @@ pins, err := client.Boards.Pins.Fetch(
 `[POST] /v1/me/following/users/`
 
 ```go
+err := client.Me.Following.Users.Create("hhsnopek")
 ```
 
 ### Unfollow a user
@@ -238,6 +269,7 @@ pins, err := client.Boards.Pins.Fetch(
 `[DELETE] /v1/me/following/users/<user>/`
 
 ```go
+err := client.Me.Following.Users.Delete("hhsnopek")
 ```
 
 ### Return Pins that the logged in user has liked
@@ -245,6 +277,11 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/likes/`
 
 ```go
+pins, page, err := client.Me.Likes.Fetch(
+    &controllers.MeLikesFetchOptionals{
+        Cursor: "some-cursor",
+    },
+)
 ```
 
 ### Return the logged in user's Pins
@@ -252,6 +289,11 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/pins/`
 
 ```go
+pins, page, err := client.Me.Pins.Fetch(
+    &controllers.MePinsFetchOptionals{
+        Cursor: "some-cursor",
+    },
+)
 ```
 
 ### Search the logged in user's Boards
@@ -259,6 +301,14 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/search/boards/`
 
 ```go
+// Load first page
+boards, page, err := client.Me.Search.Boards.Fetch(
+    "Go Pinterest",
+    &controllers.MeSearchBoardsFetchOptionals{
+        Cursor: "some-cursor",
+        Limit: 1,
+    },
+)
 ```
 
 ### Search the logged in user's Pins
@@ -266,6 +316,13 @@ pins, err := client.Boards.Pins.Fetch(
 `[GET] /v1/me/search/pins/`
 
 ```go
+pins, page, err := client.Me.Search.Pins.Fetch(
+    "Go Gopher",
+    &controllers.MeSearchPinsFetchOptionals{
+        Cursor: "some-cursor",
+        Limit: 1,
+    },
+)
 ```
 
 ## Pins Endpoints
