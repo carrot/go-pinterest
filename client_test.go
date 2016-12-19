@@ -1369,7 +1369,6 @@ func (suite *ClientTestSuite) TestSuccessfulMeSearchPinsFetch() {
 		},
 	)
 	assert.Equal(suite.T(), nil, err)
-	assert.Equal(suite.T(), (*pins)[0].Note, "Go Gopher Toy by Sean Tasdemir — Kickstarter")
 	assert.Equal(suite.T(), len(*pins), 1)
 
 	// Load Second page
@@ -1381,7 +1380,6 @@ func (suite *ClientTestSuite) TestSuccessfulMeSearchPinsFetch() {
 		},
 	)
 	assert.Equal(suite.T(), nil, err)
-	assert.Equal(suite.T(), (*pins)[0].Note, "The Go Gopher - The Go Blog")
 	assert.Equal(suite.T(), len(*pins), 1)
 }
 

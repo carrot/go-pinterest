@@ -1,6 +1,6 @@
 package models
 
-import "github.com/joeshaw/iso8601"
+import "github.com/BrandonRomano/iso8601"
 
 type Pin struct {
 	Id           string       `json:"id"`
