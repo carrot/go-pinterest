@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"bufio"
+	"encoding/base64"
 	"github.com/BrandonRomano/wrecker"
 	"github.com/carrot/go-pinterest/models"
+	"os"
 )
 
 // PinsController is the controller that is responsible for all
@@ -52,9 +55,7 @@ func (pc *PinsController) Fetch(pinId string) (*models.Pin, error) {
 type PinCreateOptionals struct {
 	Link     string
 	ImageUrl string
-	// TODO
-	// Image       string
-	// ImageBase64 string
+	Image    *os.File
 }
 
 // Create creates a new pin
@@ -71,8 +72,21 @@ func (pc *PinsController) Create(boardSpec string, note string, optionals *PinCr
 	if optionals.Link != "" {
 		request.FormParam("link", optionals.Link)
 	}
+	// Handle Image
 	if optionals.ImageUrl != "" {
 		request.FormParam("image_url", optionals.ImageUrl)
+	} else if fileInfo, err := optionals.Image.Stat(); err == nil {
+		// Create a new buffer based on file size
+		var size int64 = fileInfo.Size()
+		buf := make([]byte, size)
+
+		// Read file content into buffer
+		fReader := bufio.NewReader(optionals.Image)
+		fReader.Read(buf)
+
+		// Convert the buffer bytes to base64 string
+		imageBase64Str := base64.StdEncoding.EncodeToString(buf)
+		request.FormParam("image_base64", imageBase64Str)
 	}
 
 	// Execute Request

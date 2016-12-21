@@ -537,6 +537,28 @@ func (suite *ClientTestSuite) TestSuccessfulPinCUD() {
 	assert.Equal(suite.T(), nil, err)
 }
 
+// TestSuccessfulPinFileUpload tests that we can upload an image
+// specifying a file.
+func (suite *ClientTestSuite) TestSuccessfulPinFileUpload() {
+	file, _ := os.Open("./go_pinterest.png")
+	defer file.Close()
+
+	// Create Pin: Upload File
+	pin, err := suite.client.Pins.Create(
+		"brandonrromano/go-pinterest-2",
+		"This is a note!",
+		&controllers.PinCreateOptionals{
+			Link:  "https://google.com",
+			Image: file,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+
+	// Delete Pin
+	err = suite.client.Pins.Delete(pin.Id)
+	assert.Equal(suite.T(), nil, err)
+}
+
 // =================================
 // ========== Pins.Create ==========
 // =================================
