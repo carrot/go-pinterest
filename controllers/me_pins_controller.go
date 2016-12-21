@@ -27,32 +27,22 @@ type MePinsFetchOptionals struct {
 // Fetch loads all of the logged in user's Pins
 // Endpoint: [GET] /v1/me/pins/
 func (mpc *MePinsController) Fetch(optionals *MePinsFetchOptionals) (*[]models.Pin, *models.Page, error) {
-	// Build request
-	response := new(models.Response)
-	response.Data = &[]models.Pin{}
+	// Build + execute request
+	resp := new(models.Response)
+	resp.Data = &[]models.Pin{}
 	request := mpc.wreckerClient.Get("/me/pins/").
 		URLParam("fields", models.PIN_FIELDS).
-		Into(response)
+		Into(resp)
 	if optionals.Cursor != "" {
 		request.URLParam("cursor", optionals.Cursor)
 	}
+	httpResp, err := request.Execute()
 
-	// Execute request
-	resp, err := request.Execute()
-
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return nil, nil, err
 	}
 
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return nil, nil, &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
-	}
-
 	// OK
-	return response.Data.(*[]models.Pin), &response.Page, nil
+	return resp.Data.(*[]models.Pin), &resp.Page, nil
 }

@@ -34,26 +34,18 @@ func NewMeController(wc *wrecker.Wrecker) *MeController {
 // Endpoint: [GET] /v1/me/
 func (mc *MeController) Fetch() (*models.User, error) {
 	// Build + execute request
-	response := new(models.Response)
-	response.Data = new(models.User)
-	resp, err := mc.wreckerClient.Get("/me/").
+	resp := new(models.Response)
+	resp.Data = new(models.User)
+	httpResp, err := mc.wreckerClient.Get("/me/").
 		URLParam("fields", models.USER_FIELDS).
-		Into(response).
+		Into(resp).
 		Execute()
 
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return nil, err
 	}
 
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return nil, &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
-	}
-
 	// OK
-	return response.Data.(*models.User), nil
+	return resp.Data.(*models.User), nil
 }

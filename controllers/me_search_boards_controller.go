@@ -29,36 +29,26 @@ type MeSearchBoardsFetchOptionals struct {
 // Fetch searches the logged in user's Boards
 // Endpoint: [GET] /v1/me/search/boards/
 func (msbc *MeSearchBoardsController) Fetch(query string, optionals *MeSearchBoardsFetchOptionals) (*[]models.Board, *models.Page, error) {
-	// Build request
-	response := new(models.Response)
-	response.Data = &[]models.Board{}
+	// Build + execute request
+	resp := new(models.Response)
+	resp.Data = &[]models.Board{}
 	request := msbc.wreckerClient.Get("/me/search/boards/").
 		URLParam("fields", models.BOARD_FIELDS).
 		URLParam("query", query).
-		Into(response)
+		Into(resp)
 	if optionals.Cursor != "" {
 		request.URLParam("cursor", optionals.Cursor)
 	}
 	if optionals.Limit != 0 {
 		request.URLParam("limit", strconv.Itoa(optionals.Limit))
 	}
+	httpResp, err := request.Execute()
 
-	// Execute request
-	resp, err := request.Execute()
-
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return nil, nil, err
 	}
 
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return nil, nil, &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
-	}
-
 	// OK
-	return response.Data.(*[]models.Board), &response.Page, nil
+	return resp.Data.(*[]models.Board), &resp.Page, nil
 }
