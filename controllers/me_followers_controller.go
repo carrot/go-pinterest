@@ -27,32 +27,22 @@ type MeFollowersFetchOptionals struct {
 // Fetch loads the users that follow the logged in user
 // Endpoint: [GET] /v1/me/boards/followers/
 func (mfc *MeFollowersController) Fetch(optionals *MeFollowersFetchOptionals) (*[]models.User, *models.Page, error) {
-	// Build request
-	response := new(models.Response)
-	response.Data = &[]models.User{}
+	// Build + execute request
+	resp := new(models.Response)
+	resp.Data = &[]models.User{}
 	request := mfc.wreckerClient.Get("/me/followers/").
 		URLParam("fields", models.USER_FIELDS).
-		Into(response)
+		Into(resp)
 	if optionals.Cursor != "" {
 		request.URLParam("cursor", optionals.Cursor)
 	}
+	httpResp, err := request.Execute()
 
-	// Execute request
-	resp, err := request.Execute()
-
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return nil, nil, err
 	}
 
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return nil, nil, &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
-	}
-
 	// OK
-	return response.Data.(*[]models.User), &response.Page, nil
+	return resp.Data.(*[]models.User), &resp.Page, nil
 }

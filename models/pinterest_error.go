@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"net/http"
 )
 
 // PinterestError is a custom error that is passed for all
@@ -14,4 +15,21 @@ type PinterestError struct {
 func (e *PinterestError) Error() string {
 	out, _ := json.Marshal(e)
 	return "PinterestError: " + string(out)
+}
+
+// WrapPinterestError takes a *http.Response and a Response and returns a
+// PinterestError if one should be returned.
+func WrapPinterestError(httpResponse *http.Response, bodyResponse *Response, err error) error {
+	if err != nil {
+		return err
+	}
+
+	if !(httpResponse.StatusCode >= 200 && httpResponse.StatusCode < 300) {
+		return &PinterestError{
+			StatusCode: httpResponse.StatusCode,
+			Message:    bodyResponse.Message,
+		}
+	}
+
+	return nil
 }

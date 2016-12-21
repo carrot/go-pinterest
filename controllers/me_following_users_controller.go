@@ -27,59 +27,39 @@ type FollowingUsersControllerFetchOptionals struct {
 // Fetch loads the users that the authorized user follows
 // Endpoint: [GET] /v1/me/following/users/
 func (c *MeFollowingUsersController) Fetch(optionals *FollowingUsersControllerFetchOptionals) (*[]models.User, *models.Page, error) {
-	// Build request
-	response := new(models.Response)
-	response.Data = &[]models.User{}
+	// Build + execute request
+	resp := new(models.Response)
+	resp.Data = &[]models.User{}
 	request := c.wreckerClient.Get("/me/following/users/").
 		URLParam("fields", models.USER_FIELDS).
-		Into(response)
+		Into(resp)
 	if optionals.Cursor != "" {
 		request.URLParam("cursor", optionals.Cursor)
 	}
+	httpResp, err := request.Execute()
 
-	// Execute request
-	resp, err := request.Execute()
-
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return nil, nil, err
 	}
 
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return nil, nil, &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
-	}
-
 	// OK
-	return response.Data.(*[]models.User), &response.Page, nil
+	return resp.Data.(*[]models.User), &resp.Page, nil
 }
 
 // Create follows a user
 // Endpoint: [POST] /v1/me/following/users/
 func (c *MeFollowingUsersController) Create(user string) error {
-	// Build request
-	response := new(models.Response)
-	request := c.wreckerClient.Post("/me/following/users/").
+	// Build + execute request
+	resp := new(models.Response)
+	httpResp, err := c.wreckerClient.Post("/me/following/users/").
 		FormParam("user", user).
-		Into(response)
+		Into(resp).
+		Execute()
 
-	// Execute request
-	resp, err := request.Execute()
-
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return err
-	}
-
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
 	}
 
 	// OK
@@ -89,25 +69,15 @@ func (c *MeFollowingUsersController) Create(user string) error {
 // Delete unfollows a user
 // Endpoint: [DELETE] /v1/me/following/users/
 func (c *MeFollowingUsersController) Delete(user string) error {
-	// Build request
-	response := new(models.Response)
-	request := c.wreckerClient.Delete("/me/following/users/" + user + "/").
-		Into(response)
+	// Build + execute request
+	resp := new(models.Response)
+	httpResp, err := c.wreckerClient.Delete("/me/following/users/" + user + "/").
+		Into(resp).
+		Execute()
 
-	// Execute request
-	resp, err := request.Execute()
-
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return err
-	}
-
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
 	}
 
 	// OK

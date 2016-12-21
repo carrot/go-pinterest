@@ -24,30 +24,21 @@ func NewPinsController(wc *wrecker.Wrecker) *PinsController {
 // Fetch loads a pin from the pin id
 // Endpoint: [GET] /v1/pins/<pin>/
 func (pc *PinsController) Fetch(pinId string) (*models.Pin, error) {
-	// Make request
-	response := new(models.Response)
-	response.Data = new(models.Pin)
-
-	resp, err := pc.wreckerClient.Get("/pins/"+pinId+"/").
+	// Build + execute request
+	resp := new(models.Response)
+	resp.Data = new(models.Pin)
+	httpResp, err := pc.wreckerClient.Get("/pins/"+pinId+"/").
 		URLParam("fields", models.PIN_FIELDS).
-		Into(response).
+		Into(resp).
 		Execute()
 
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return nil, err
 	}
 
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return nil, &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
-	}
-
 	// OK
-	return response.Data.(*models.Pin), nil
+	return resp.Data.(*models.Pin), nil
 }
 
 // PinCreateOptionals is a struct that represents the optional parameters
@@ -61,14 +52,14 @@ type PinCreateOptionals struct {
 // Create creates a new pin
 // Endpoint: [POST] /v1/pins/
 func (pc *PinsController) Create(boardSpec string, note string, optionals *PinCreateOptionals) (*models.Pin, error) {
-	// Build Request
-	response := new(models.Response)
-	response.Data = new(models.Pin)
+	// Build + execute request
+	resp := new(models.Response)
+	resp.Data = new(models.Pin)
 	request := pc.wreckerClient.Post("/pins/").
 		URLParam("fields", models.PIN_FIELDS).
 		FormParam("board", boardSpec).
 		FormParam("note", note).
-		Into(response)
+		Into(resp)
 	if optionals.Link != "" {
 		request.FormParam("link", optionals.Link)
 	}
@@ -88,25 +79,15 @@ func (pc *PinsController) Create(boardSpec string, note string, optionals *PinCr
 		imageBase64Str := base64.StdEncoding.EncodeToString(buf)
 		request.FormParam("image_base64", imageBase64Str)
 	}
+	httpResp, err := request.Execute()
 
-	// Execute Request
-	resp, err := request.Execute()
-
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return nil, err
 	}
 
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return nil, &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
-	}
-
 	// OK
-	return response.Data.(*models.Pin), nil
+	return resp.Data.(*models.Pin), nil
 }
 
 // PinUpdateOptionals is a struct that represents the optional parameters
@@ -120,12 +101,12 @@ type PinUpdateOptionals struct {
 // Update updates an existing pin
 // Endpoint: [PATCH] /v1/pins/<pin>/
 func (pc *PinsController) Update(pinId string, optionals *PinUpdateOptionals) (*models.Pin, error) {
-	// Build request
-	response := new(models.Response)
-	response.Data = new(models.Pin)
+	// Build + execute request
+	resp := new(models.Response)
+	resp.Data = new(models.Pin)
 	request := pc.wreckerClient.Patch("/pins/"+pinId+"/").
 		URLParam("fields", models.PIN_FIELDS).
-		Into(response)
+		Into(resp)
 	if optionals.Board != "" {
 		request.FormParam("board", optionals.Board)
 	}
@@ -135,45 +116,27 @@ func (pc *PinsController) Update(pinId string, optionals *PinUpdateOptionals) (*
 	if optionals.Link != "" {
 		request.FormParam("link", optionals.Link)
 	}
+	httpResp, err := request.Execute()
 
-	// Execute Request
-	resp, err := request.Execute()
-
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return nil, err
 	}
 
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return nil, &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
-	}
-
 	// OK
-	return response.Data.(*models.Pin), nil
+	return resp.Data.(*models.Pin), nil
 }
 
 // Delete deletes an existing pin
 // Endpoint: [DELETE] /v1/pins/<pin>/
 func (pc *PinsController) Delete(pinId string) error {
 	// Execute Request
-	response := new(models.Response)
-	resp, err := pc.wreckerClient.Delete("/pins/" + pinId + "/").Execute()
+	resp := new(models.Response)
+	httpResp, err := pc.wreckerClient.Delete("/pins/" + pinId + "/").Execute()
 
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return err
-	}
-
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
 	}
 
 	// OK

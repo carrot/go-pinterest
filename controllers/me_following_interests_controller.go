@@ -27,32 +27,22 @@ type MeFollowingInterestsFetchOptionals struct {
 // Fetch loads the authorized users interests
 // Endpoint: [GET] /v1/me/following/interests/
 func (mfic *MeFollowingInterestsController) Fetch(optionals *MeFollowingInterestsFetchOptionals) (*[]models.Interest, *models.Page, error) {
-	// Build request
-	response := new(models.Response)
-	response.Data = &[]models.Interest{}
+	// Build + execute request
+	resp := new(models.Response)
+	resp.Data = &[]models.Interest{}
 	request := mfic.wreckerClient.Get("/me/following/interests/").
 		URLParam("fields", models.INTEREST_FIELDS).
-		Into(response)
+		Into(resp)
 	if optionals.Cursor != "" {
 		request.URLParam("cursor", optionals.Cursor)
 	}
+	httpResp, err := request.Execute()
 
-	// Execute request
-	resp, err := request.Execute()
-
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return nil, nil, err
 	}
 
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return nil, nil, &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
-	}
-
 	// OK
-	return response.Data.(*[]models.Interest), &response.Page, nil
+	return resp.Data.(*[]models.Interest), &resp.Page, nil
 }

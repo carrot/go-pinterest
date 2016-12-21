@@ -29,35 +29,25 @@ type MeBoardsSuggestedFetchOptionals struct {
 // Fetch loads board suggestions for the logged in user
 // Endpoint: [GET] /v1/me/boards/suggested/
 func (mbsc *MeBoardsSuggestedController) Fetch(optionals *MeBoardsSuggestedFetchOptionals) (*[]models.Board, error) {
-	// Build request
-	response := new(models.Response)
-	response.Data = &[]models.Board{}
+	// Build + execute request
+	resp := new(models.Response)
+	resp.Data = &[]models.Board{}
 	request := mbsc.wreckerClient.Get("/me/boards/suggested/").
 		URLParam("fields", models.BOARD_FIELDS).
-		Into(response)
+		Into(resp)
 	if optionals.Count != 0 {
 		request.URLParam("count", strconv.Itoa(int(optionals.Count)))
 	}
 	if optionals.Pin != "" {
 		request.URLParam("pin", optionals.Pin)
 	}
+	httpResp, err := request.Execute()
 
-	// Execute request
-	resp, err := request.Execute()
-
-	// Error from Wrecker
-	if err != nil {
+	// Check Error
+	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
 		return nil, err
 	}
 
-	// Status code
-	if !(resp.StatusCode >= 200 && resp.StatusCode < 300) {
-		return nil, &models.PinterestError{
-			StatusCode: resp.StatusCode,
-			Message:    response.Message,
-		}
-	}
-
 	// OK
-	return response.Data.(*[]models.Board), nil
+	return resp.Data.(*[]models.Board), nil
 }
