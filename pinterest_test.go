@@ -1,15 +1,16 @@
-package main_test
+package pinterest_test
 
 import (
+	"net/http"
+	"os"
+	"testing"
+	"time"
+
 	pinterest "github.com/carrot/go-pinterest"
 	"github.com/carrot/go-pinterest/controllers"
 	"github.com/carrot/go-pinterest/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"os"
-	"testing"
-	"time"
 )
 
 // In order for 'go test' to run this suite, we need to create
