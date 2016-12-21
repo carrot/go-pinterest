@@ -8,7 +8,7 @@ To create a simple Pinterest client:
 
 ```go
 import(
-    pinterest "github.com/carrot/go-pinterest"
+    "github.com/carrot/go-pinterest"
     // Below imports aren't needed immediately, but you'll want these soon after
 	"github.com/carrot/go-pinterest/controllers"
 	"github.com/carrot/go-pinterest/models"
