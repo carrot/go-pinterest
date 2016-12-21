@@ -33,7 +33,7 @@ func (mbsc *MeBoardsSuggestedController) Fetch(optionals *MeBoardsSuggestedFetch
 	response := new(models.Response)
 	response.Data = &[]models.Board{}
 	request := mbsc.wreckerClient.Get("/me/boards/suggested/").
-		URLParam("fields", "id,name,url,counts,creator,description,created_at,image,privacy,reason").
+		URLParam("fields", models.BOARD_FIELDS).
 		Into(response)
 	if optionals.Count != 0 {
 		request.URLParam("count", strconv.Itoa(int(optionals.Count)))

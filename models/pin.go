@@ -2,6 +2,8 @@ package models
 
 import "github.com/BrandonRomano/iso8601"
 
+const PIN_FIELDS = "id,link,note,url,attribution,color,board,counts,created_at,creator,image,media,metadata,original_link"
+
 type Pin struct {
 	Id           string       `json:"id"`
 	Link         string       `json:"link"`

@@ -22,12 +22,12 @@ func newMeBoardsController(wc *wrecker.Wrecker) *MeBoardsController {
 
 // Fetch loads the authorized users boards
 // Endpoint: [GET] /v1/me/boards/
-func (mbc *MeBoardsController) Fetch() (*[]models.Board, error){
+func (mbc *MeBoardsController) Fetch() (*[]models.Board, error) {
 	// Build + execute request
 	response := new(models.Response)
 	response.Data = &[]models.Board{}
 	resp, err := mbc.wreckerClient.Get("/me/boards/").
-		URLParam("fields", "id,name,url,counts,creator,description,created_at,image,privacy,reason").
+		URLParam("fields", models.BOARD_FIELDS).
 		Into(response).
 		Execute()
 

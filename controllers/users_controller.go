@@ -25,7 +25,7 @@ func (uc *UsersController) Fetch(username string) (*models.User, error) {
 	response.Data = new(models.User)
 
 	resp, err := uc.wreckerClient.Get("/users/"+username+"/").
-		URLParam("fields", "first_name,last_name,url,account_type,bio,counts,created_at,image,username").
+		URLParam("fields", models.USER_FIELDS).
 		Into(response).
 		Execute()
 

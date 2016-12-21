@@ -27,7 +27,7 @@ func (bc *BoardsController) Fetch(boardSpec string) (*models.Board, error) {
 	response := new(models.Response)
 	response.Data = new(models.Board)
 	resp, err := bc.wreckerClient.Get("/boards/"+boardSpec).
-		URLParam("fields", "id,url,reason,counts,created_at,creator,description,image,privacy,name").
+		URLParam("fields", models.BOARD_FIELDS).
 		Into(response).
 		Execute()
 
@@ -61,7 +61,7 @@ func (bc *BoardsController) Create(boardName string, optionals *BoardCreateOptio
 	response := new(models.Response)
 	response.Data = new(models.Board)
 	resp, err := bc.wreckerClient.Post("/boards/").
-		URLParam("fields", "id,url,reason,counts,created_at,creator,description,image,privacy,name").
+		URLParam("fields", models.BOARD_FIELDS).
 		FormParam("name", boardName).
 		FormParam("description", optionals.Description).
 		Into(response).
@@ -98,7 +98,7 @@ func (bc *BoardsController) Update(boardSpec string, optionals *BoardUpdateOptio
 	response := new(models.Response)
 	response.Data = new(models.Board)
 	resp, err := bc.wreckerClient.Patch("/boards/"+boardSpec+"/").
-		URLParam("fields", "id,url,reason,counts,created_at,creator,description,image,privacy,name").
+		URLParam("fields", models.BOARD_FIELDS).
 		FormParam("name", optionals.Name).
 		FormParam("description", optionals.Description).
 		Into(response).

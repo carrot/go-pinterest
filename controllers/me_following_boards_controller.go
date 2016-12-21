@@ -31,7 +31,7 @@ func (mfbc *MeFollowingBoardsController) Fetch(optionals *MeFollowingBoardsFetch
 	response := new(models.Response)
 	response.Data = &[]models.Board{}
 	request := mfbc.wreckerClient.Get("/me/following/boards/").
-		URLParam("fields", "id,name,url,counts,created_at,creator,description,image,privacy,reason").
+		URLParam("fields", models.BOARD_FIELDS).
 		Into(response)
 	if optionals.Cursor != "" {
 		request.URLParam("cursor", optionals.Cursor)

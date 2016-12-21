@@ -31,7 +31,7 @@ func (mpc *MePinsController) Fetch(optionals *MePinsFetchOptionals) (*[]models.P
 	response := new(models.Response)
 	response.Data = &[]models.Pin{}
 	request := mpc.wreckerClient.Get("/me/pins/").
-		URLParam("fields", "id,link,note,url,attribution,board,color,counts,created_at,creator,image,media,metadata,original_link").
+		URLParam("fields", models.PIN_FIELDS).
 		Into(response)
 	if optionals.Cursor != "" {
 		request.URLParam("cursor", optionals.Cursor)

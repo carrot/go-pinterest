@@ -31,7 +31,7 @@ func (mfic *MeFollowingInterestsController) Fetch(optionals *MeFollowingInterest
 	response := new(models.Response)
 	response.Data = &[]models.Interest{}
 	request := mfic.wreckerClient.Get("/me/following/interests/").
-		URLParam("fields", "id,name").
+		URLParam("fields", models.INTEREST_FIELDS).
 		Into(response)
 	if optionals.Cursor != "" {
 		request.URLParam("cursor", optionals.Cursor)

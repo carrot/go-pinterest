@@ -29,7 +29,7 @@ func (pc *PinsController) Fetch(pinId string) (*models.Pin, error) {
 	response.Data = new(models.Pin)
 
 	resp, err := pc.wreckerClient.Get("/pins/"+pinId+"/").
-		URLParam("fields", "id,link,note,url,attribution,board,color,counts,created_at,creator,image,media,metadata,original_link").
+		URLParam("fields", models.PIN_FIELDS).
 		Into(response).
 		Execute()
 
@@ -65,7 +65,7 @@ func (pc *PinsController) Create(boardSpec string, note string, optionals *PinCr
 	response := new(models.Response)
 	response.Data = new(models.Pin)
 	request := pc.wreckerClient.Post("/pins/").
-		URLParam("fields", "id,link,note,url,attribution,board,color,counts,created_at,creator,image,media,metadata,original_link").
+		URLParam("fields", models.PIN_FIELDS).
 		FormParam("board", boardSpec).
 		FormParam("note", note).
 		Into(response)
@@ -124,7 +124,7 @@ func (pc *PinsController) Update(pinId string, optionals *PinUpdateOptionals) (*
 	response := new(models.Response)
 	response.Data = new(models.Pin)
 	request := pc.wreckerClient.Patch("/pins/"+pinId+"/").
-		URLParam("fields", "id,link,note,url,attribution,board,color,counts,created_at,creator,image,media,metadata,original_link").
+		URLParam("fields", models.PIN_FIELDS).
 		Into(response)
 	if optionals.Board != "" {
 		request.FormParam("board", optionals.Board)

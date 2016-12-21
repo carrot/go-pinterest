@@ -33,7 +33,7 @@ func (mspc *MeSearchPinsController) Fetch(query string, optionals *MeSearchPinsF
 	response := new(models.Response)
 	response.Data = &[]models.Pin{}
 	request := mspc.wreckerClient.Get("/me/search/pins/").
-		URLParam("fields", "attribution,board,color,counts,created_at,creator,id,image,link,media,metadata,note,original_link,url").
+		URLParam("fields", models.PIN_FIELDS).
 		URLParam("query", query).
 		Into(response)
 	if optionals.Cursor != "" {
