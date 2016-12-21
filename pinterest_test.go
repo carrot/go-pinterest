@@ -1,7 +1,7 @@
 package pinterest_test
 
 import (
-	pinterest "github.com/carrot/go-pinterest"
+	"github.com/carrot/go-pinterest"
 	"github.com/carrot/go-pinterest/controllers"
 	"github.com/carrot/go-pinterest/models"
 	"github.com/stretchr/testify/assert"
