@@ -31,7 +31,7 @@ func (mfc *MeFollowersController) Fetch(optionals *MeFollowersFetchOptionals) (*
 	response := new(models.Response)
 	response.Data = &[]models.User{}
 	request := mfc.wreckerClient.Get("/me/followers/").
-		URLParam("fields", "first_name,id,last_name,url,account_type,bio,counts,created_at,image,username").
+		URLParam("fields", models.USER_FIELDS).
 		Into(response)
 	if optionals.Cursor != "" {
 		request.URLParam("cursor", optionals.Cursor)

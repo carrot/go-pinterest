@@ -4,6 +4,8 @@ import (
 	"github.com/BrandonRomano/iso8601"
 )
 
+const USER_FIELDS = "first_name,last_name,url,account_type,bio,counts,created_at,id,image,username"
+
 // User is a struct that represents an individual user
 // from the Pinterest API.
 type User struct {

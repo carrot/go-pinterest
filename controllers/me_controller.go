@@ -37,7 +37,7 @@ func (mc *MeController) Fetch() (*models.User, error) {
 	response := new(models.Response)
 	response.Data = new(models.User)
 	resp, err := mc.wreckerClient.Get("/me/").
-		URLParam("fields", "first_name,last_name,url,account_type,bio,counts,created_at,id,image,username").
+		URLParam("fields", models.USER_FIELDS).
 		Into(response).
 		Execute()
 

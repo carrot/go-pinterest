@@ -33,7 +33,7 @@ func (msbc *MeSearchBoardsController) Fetch(query string, optionals *MeSearchBoa
 	response := new(models.Response)
 	response.Data = &[]models.Board{}
 	request := msbc.wreckerClient.Get("/me/search/boards/").
-		URLParam("fields", "id,name,url,counts,created_at,creator,description,privacy,image,reason").
+		URLParam("fields", models.BOARD_FIELDS).
 		URLParam("query", query).
 		Into(response)
 	if optionals.Cursor != "" {

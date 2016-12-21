@@ -31,7 +31,7 @@ func (bpc *BoardsPinsController) Fetch(boardSpec string, optionals *BoardsPinsFe
 	response := new(models.Response)
 	response.Data = &[]models.Pin{}
 	resp, err := bpc.wreckerClient.Get("/boards/"+boardSpec+"/pins/").
-		URLParam("fields", "id,link,note,url,attribution,color,board,counts,created_at,creator,image,media,metadata,original_link").
+		URLParam("fields", models.PIN_FIELDS).
 		Into(response).
 		Execute()
 
