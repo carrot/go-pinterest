@@ -1,7 +1,7 @@
 package models
 
 type Images struct {
-	Size_60x60 Image `60x60`
+	Size_60x60 Image `json:"60x60"`
 }
 
 type Image struct {
