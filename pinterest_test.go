@@ -1432,3 +1432,23 @@ func (suite *ClientTestSuite) TestUnauthorizedMeSearchPinsFetch() {
 		assert.Equal(suite.T(), true, false)
 	}
 }
+
+// ========================================
+// ========== OAuth.Token.Create ==========
+// ========================================
+
+func (suite *ClientTestSuite) TestUnauthorizedOAuthTokenCreate() {
+	_, err := suite.client.OAuth.Token.Create("", "", "")
+
+	// There should be an error
+	assert.NotEqual(suite.T(), nil, err)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}

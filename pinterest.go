@@ -17,6 +17,7 @@ import (
 // For more information about the Pinterest API,
 // check out https://developers.pinterest.com/
 type Client struct {
+	OAuth         *controllers.OAuthController
 	Users         *controllers.UsersController
 	Boards        *controllers.BoardsController
 	Pins          *controllers.PinsController
@@ -40,6 +41,7 @@ func NewClient() *Client {
 	// Build Pinterest client
 	return &Client{
 		wreckerClient: wc,
+		OAuth:         controllers.NewOAuthController(wc),
 		Users:         controllers.NewUsersController(wc),
 		Boards:        controllers.NewBoardsController(wc),
 		Pins:          controllers.NewPinsController(wc),
