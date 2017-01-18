@@ -1437,6 +1437,15 @@ func (suite *ClientTestSuite) TestUnauthorizedMeSearchPinsFetch() {
 // ========== OAuth.Token.Create ==========
 // ========================================
 
+// TestTimeoutOAuthTokenCreate tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutOAuthTokenCreate() {
+	_, err := suite.timeoutClient.OAuth.Token.Create("", "", "")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedOAuthTokenCreate tests that an error is appropriately thrown
+// when the user makes an unauthorized request
 func (suite *ClientTestSuite) TestUnauthorizedOAuthTokenCreate() {
 	_, err := suite.client.OAuth.Token.Create("", "", "")
 
