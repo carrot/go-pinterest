@@ -95,6 +95,20 @@ if pinterestError, ok := err.(*models.PinterestError); ok {
 }
 ```
 
+## OAuth Endpoints
+
+### Generate Access Token
+
+`[POST] /v1/oauth/token`
+
+```go
+accessToken, err := client.OAuth.Token.Create(
+    "client-id",
+    "client-secret",
+    "access-code"
+)
+```
+
 ## Boards Endpoints
 
 ### Create a Board

@@ -357,18 +357,18 @@ func (suite *ClientTestSuite) TestSuccessfulBoardCUD() {
 	// Updating the Board
 	board, err = suite.client.Boards.Update("brandonrromano/go-pinterest-test",
 		&controllers.BoardUpdateOptionals{
-			Name:        "Go Pinterest Test2",
-			Description: "Go Pinterest Test2!",
+			Name:        "Go Pinterest Test3",
+			Description: "Go Pinterest Test3!",
 		},
 	)
 
 	// Assume there is no error / test result
 	assert.Equal(suite.T(), nil, err)
-	assert.Equal(suite.T(), board.Name, "Go Pinterest Test2")
-	assert.Equal(suite.T(), board.Description, "Go Pinterest Test2!")
+	assert.Equal(suite.T(), board.Name, "Go Pinterest Test3")
+	assert.Equal(suite.T(), board.Description, "Go Pinterest Test3!")
 
 	// Deleting the board
-	err = suite.client.Boards.Delete("brandonrromano/go-pinterest-test2")
+	err = suite.client.Boards.Delete("brandonrromano/go-pinterest-test3")
 	assert.Equal(suite.T(), nil, err)
 }
 
@@ -1422,6 +1422,35 @@ func (suite *ClientTestSuite) TestUnauthorizedMeSearchPinsFetch() {
 		"Go Pinterest",
 		&controllers.MeSearchPinsFetchOptionals{},
 	)
+
+	// Check error type
+	if pinterestError, ok := err.(*models.PinterestError); ok {
+		// Should be a 401
+		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
+	} else {
+		// Make this error out, should always be a PinterestError
+		assert.Equal(suite.T(), true, false)
+	}
+}
+
+// ========================================
+// ========== OAuth.Token.Create ==========
+// ========================================
+
+// TestTimeoutOAuthTokenCreate tests that an error is appropriately thrown
+// when a network timeout occurs
+func (suite *ClientTestSuite) TestTimeoutOAuthTokenCreate() {
+	_, err := suite.timeoutClient.OAuth.Token.Create("", "", "")
+	assert.NotEqual(suite.T(), nil, err)
+}
+
+// TestUnauthorizedOAuthTokenCreate tests that an error is appropriately thrown
+// when the user makes an unauthorized request
+func (suite *ClientTestSuite) TestUnauthorizedOAuthTokenCreate() {
+	_, err := suite.client.OAuth.Token.Create("", "", "")
+
+	// There should be an error
+	assert.NotEqual(suite.T(), nil, err)
 
 	// Check error type
 	if pinterestError, ok := err.(*models.PinterestError); ok {
