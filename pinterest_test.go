@@ -357,18 +357,18 @@ func (suite *ClientTestSuite) TestSuccessfulBoardCUD() {
 	// Updating the Board
 	board, err = suite.client.Boards.Update("brandonrromano/go-pinterest-test",
 		&controllers.BoardUpdateOptionals{
-			Name:        "Go Pinterest Test2",
-			Description: "Go Pinterest Test2!",
+			Name:        "Go Pinterest Test3",
+			Description: "Go Pinterest Test3!",
 		},
 	)
 
 	// Assume there is no error / test result
 	assert.Equal(suite.T(), nil, err)
-	assert.Equal(suite.T(), board.Name, "Go Pinterest Test2")
-	assert.Equal(suite.T(), board.Description, "Go Pinterest Test2!")
+	assert.Equal(suite.T(), board.Name, "Go Pinterest Test3")
+	assert.Equal(suite.T(), board.Description, "Go Pinterest Test3!")
 
 	// Deleting the board
-	err = suite.client.Boards.Delete("brandonrromano/go-pinterest-test2")
+	err = suite.client.Boards.Delete("brandonrromano/go-pinterest-test3")
 	assert.Equal(suite.T(), nil, err)
 }
 
