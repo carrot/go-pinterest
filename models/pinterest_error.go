@@ -3,6 +3,8 @@ package models
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/BrandonRomano/wrecker"
 )
 
 // PinterestError is a custom error that is passed for all
@@ -21,7 +23,9 @@ func (e *PinterestError) Error() string {
 // PinterestError if one should be returned.
 func WrapPinterestError(httpResponse *http.Response, bodyResponse *Response, err error) error {
 	if err != nil {
-		return err
+		if _, ok := err.(wrecker.ResponseError); !ok {
+			return err
+		}
 	}
 
 	if !(httpResponse.StatusCode >= 200 && httpResponse.StatusCode < 300) {

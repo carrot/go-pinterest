@@ -12,7 +12,6 @@ type MeController struct {
 	Boards        *MeBoardsController
 	Followers     *MeFollowersController
 	Following     *MeFollowingController
-	Likes         *MeLikesController
 	Pins          *MePinsController
 	Search        *MeSearchController
 }
@@ -24,7 +23,6 @@ func NewMeController(wc *wrecker.Wrecker) *MeController {
 		Boards:        newMeBoardsController(wc),
 		Followers:     newMeFollowersController(wc),
 		Following:     newMeFollowingController(wc),
-		Likes:         newMeLikesController(wc),
 		Pins:          newMePinsController(wc),
 		Search:        newMeSearchController(wc),
 	}
