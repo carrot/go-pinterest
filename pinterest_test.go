@@ -521,29 +521,24 @@ func (suite *ClientTestSuite) TestSuccessfulPinCUD() {
 	assert.Equal(suite.T(), "http://www.google.com/", pin.OriginalLink)
 	assert.NotEqual(suite.T(), "", pin.Image.Original.Url)
 
-	/*
-			// Update the Pin
-			fmt.Println("PIN ID: ", pin.Id)
-			pin, err = suite.client.Pins.Update(
-				pin.Id,
-				&controllers.PinUpdateOptionals{
-					Board: "brandonrromano/go-pinterest",
-					Note:  "This is a new cat",
-					Link:  "http://www.facebook.com/",
-				},
-			)
-			fmt.Println("PIN2: ", pin)
-			fmt.Println(err)
-			assert.Equal(suite.T(), nil, err)
-			assert.Equal(suite.T(), "This is a new cat", pin.Note)
-			assert.Equal(suite.T(), "http://www.facebook.com/", pin.OriginalLink)
-			assert.Equal(suite.T(), "Go Pinterest!", pin.Board.Name)
+	// Update the Pin
+	pin, err = suite.client.Pins.Update(
+		pin.Id,
+		&controllers.PinUpdateOptionals{
+			Board: "brandonrromano/go-pinterest",
+			Note:  "This is a new cat",
+			Link:  "http://www.facebook.com/",
+		},
+	)
 
-		// Delete the Pin
-		err = suite.client.Pins.Delete(pin.Id)
-		assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), "This is a new cat", pin.Note)
+	assert.Equal(suite.T(), "http://www.facebook.com/", pin.OriginalLink)
+	assert.Equal(suite.T(), "Go Pinterest!", pin.Board.Name)
 
-	*/
+	// Delete the Pin
+	err = suite.client.Pins.Delete(pin.Id)
+	assert.Equal(suite.T(), nil, err)
 }
 
 // TestSuccessfulPinFileUpload tests that we can upload an image
@@ -553,7 +548,7 @@ func (suite *ClientTestSuite) TestSuccessfulPinFileUpload() {
 	defer file.Close()
 
 	// Create Pin: Upload File
-	_, err := suite.client.Pins.Create(
+	pin, err := suite.client.Pins.Create(
 		"brandonrromano/go-pinterest-2",
 		"This is a note!",
 		&controllers.PinCreateOptionals{
@@ -564,10 +559,8 @@ func (suite *ClientTestSuite) TestSuccessfulPinFileUpload() {
 	assert.Equal(suite.T(), nil, err)
 
 	// Delete Pin
-	/*
-		err = suite.client.Pins.Delete(pin.Id)
-		assert.Equal(suite.T(), nil, err)
-	*/
+	err = suite.client.Pins.Delete(pin.Id)
+	assert.Equal(suite.T(), nil, err)
 }
 
 // =================================
