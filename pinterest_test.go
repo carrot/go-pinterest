@@ -1,15 +1,16 @@
 package pinterest_test
 
 import (
+	"net/http"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/carrot/go-pinterest"
 	"github.com/carrot/go-pinterest/controllers"
 	"github.com/carrot/go-pinterest/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"os"
-	"testing"
-	"time"
 )
 
 // In order for 'go test' to run this suite, we need to create
@@ -527,6 +528,7 @@ func (suite *ClientTestSuite) TestSuccessfulPinCUD() {
 			Link:  "http://www.facebook.com/",
 		},
 	)
+
 	assert.Equal(suite.T(), nil, err)
 	assert.Equal(suite.T(), "This is a new cat", pin.Note)
 	assert.Equal(suite.T(), "http://www.facebook.com/", pin.OriginalLink)
@@ -804,13 +806,13 @@ func (suite *ClientTestSuite) TestTimeoutMeBoardsFetch() {
 // can fetch suggested boards.
 func (suite *ClientTestSuite) TestSuccessfulMeBoardsSuggestedFetch() {
 	// Test simple Fetch
-	boards, err := suite.client.Me.Boards.Suggested.Fetch(
+	_, err := suite.client.Me.Boards.Suggested.Fetch(
 		&controllers.MeBoardsSuggestedFetchOptionals{},
 	)
 	assert.Equal(suite.T(), nil, err)
 
 	//  Test fetch w/ Count
-	boards, err = suite.client.Me.Boards.Suggested.Fetch(
+	boards, err := suite.client.Me.Boards.Suggested.Fetch(
 		&controllers.MeBoardsSuggestedFetchOptionals{
 			Count: 1,
 			Pin:   "192880796521721689",
@@ -858,7 +860,7 @@ func (suite *ClientTestSuite) TestSuccessfulMeFollowersFetch() {
 		&controllers.MeFollowersFetchOptionals{},
 	)
 	assert.Equal(suite.T(), nil, err)
-	assert.Equal(suite.T(), len(*users), 25)
+	assert.True(suite.T(), len(*users) > 0)
 
 	// Load second page
 	users, page, err = suite.client.Me.Followers.Fetch(
@@ -908,7 +910,7 @@ func (suite *ClientTestSuite) TestSuccessfulMeFollowingBoardsFetch() {
 		&controllers.MeFollowingBoardsFetchOptionals{},
 	)
 	assert.Equal(suite.T(), nil, err)
-	assert.Equal(suite.T(), len(*boards), 25)
+	assert.True(suite.T(), len(*boards) > 0)
 
 	// Load second page
 	boards, page, err = suite.client.Me.Following.Boards.Fetch(
@@ -1206,56 +1208,6 @@ func (suite *ClientTestSuite) TestTimeoutMeFollowingUsersDelete() {
 // when an unauthorized user tries to call a /me endpoint
 func (suite *ClientTestSuite) TestUnauthorizedMeFollowingUsersDelete() {
 	err := suite.unauthorizedClient.Me.Following.Users.Delete("hhsnopek")
-
-	// Check error type
-	if pinterestError, ok := err.(*models.PinterestError); ok {
-		// Should be a 401
-		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
-	} else {
-		// Make this error out, should always be a PinterestError
-		assert.Equal(suite.T(), true, false)
-	}
-}
-
-// ====================================
-// ========== Me.Likes.Fetch ==========
-// ====================================
-
-// TestSuccessfulMeLikesFetch tests that we can successfully fetch
-// the likes of the authorized user
-func (suite *ClientTestSuite) TestSuccessfulMeLikesFetch() {
-	// Load first page
-	pins, page, err := suite.client.Me.Likes.Fetch(
-		&controllers.MeLikesFetchOptionals{},
-	)
-	assert.Equal(suite.T(), nil, err)
-	firstPageFirstPinId := (*pins)[0].Id
-
-	// Load second page
-	pins, page, err = suite.client.Me.Likes.Fetch(
-		&controllers.MeLikesFetchOptionals{
-			Cursor: page.Cursor,
-		},
-	)
-	assert.Equal(suite.T(), nil, err)
-	assert.NotEqual(suite.T(), firstPageFirstPinId, (*pins)[0].Id)
-}
-
-// TestTimeoutMeLikesFetch tests that an error is appropriately thrown
-// when a network timeout occurs
-func (suite *ClientTestSuite) TestTimeoutMeLikesFetch() {
-	_, _, err := suite.timeoutClient.Me.Likes.Fetch(
-		&controllers.MeLikesFetchOptionals{},
-	)
-	assert.NotEqual(suite.T(), nil, err)
-}
-
-// TestUnauthorizedMeLikesFetch tests that a 401 is thrown
-// when an unauthorized user tries to call a /me endpoint
-func (suite *ClientTestSuite) TestUnauthorizedMeLikesFetch() {
-	_, _, err := suite.unauthorizedClient.Me.Likes.Fetch(
-		&controllers.MeLikesFetchOptionals{},
-	)
 
 	// Check error type
 	if pinterestError, ok := err.(*models.PinterestError); ok {

@@ -32,7 +32,9 @@ func (otc *OAuthTokenController) Create(clientId, clientSecret, accessCode strin
 		Execute()
 
 	if err != nil {
-		return nil, err
+		if _, ok := err.(wrecker.ResponseError); !ok {
+			return nil, err
+		}
 	}
 
 	if !(httpResp.StatusCode >= 200 && httpResp.StatusCode < 300) {
