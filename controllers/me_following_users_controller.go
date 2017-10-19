@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"strconv"
+
 	"github.com/BrandonRomano/wrecker"
 	"github.com/carrot/go-pinterest/models"
 )
@@ -22,6 +24,7 @@ func newMeFollowingUsersController(wc *wrecker.Wrecker) *MeFollowingUsersControl
 // parameters for the Fetch method
 type FollowingUsersControllerFetchOptionals struct {
 	Cursor string
+	Limit  int
 }
 
 // Fetch loads the users that the authorized user follows
@@ -35,6 +38,9 @@ func (c *MeFollowingUsersController) Fetch(optionals *FollowingUsersControllerFe
 		Into(resp)
 	if optionals.Cursor != "" {
 		request.URLParam("cursor", optionals.Cursor)
+	}
+	if optionals.Limit != 0 {
+		request.URLParam("limit", strconv.Itoa(optionals.Limit))
 	}
 	httpResp, err := request.Execute()
 

@@ -1083,13 +1083,14 @@ func (suite *ClientTestSuite) TestSuccessfulMeFollowingUsersFetch() {
 	assert.Equal(suite.T(), len(*users), 25)
 
 	// Load second page
-	suite.client.Me.Following.Users.Fetch(
+	users, _, err = suite.client.Me.Following.Users.Fetch(
 		&controllers.FollowingUsersControllerFetchOptionals{
 			Cursor: page.Cursor,
+			Limit:  3,
 		},
 	)
 	assert.Equal(suite.T(), nil, err)
-	assert.True(suite.T(), len(*users) > 0)
+	assert.True(suite.T(), len(*users) == 3)
 }
 
 // TestTimeoutMeFollowingUsersFetch tests that an error is appropriately thrown
