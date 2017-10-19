@@ -1,4 +1,4 @@
-# Go Pinterest [![Build Status](https://travis-ci.org/carrot/go-pinterest.svg?branch=master)](https://travis-ci.org/carrot/go-pinterest) [![Coverage Status](https://coveralls.io/repos/github/carrot/go-pinterest/badge.svg?branch=br.coveralls)](https://coveralls.io/github/carrot/go-pinterest?branch=br.coveralls) [![Go Report Card](https://goreportcard.com/badge/github.com/carrot/go-pinterest)](https://goreportcard.com/report/github.com/carrot/go-pinterest)
+# Go Pinterest [![Build Status](https://travis-ci.org/carrot/go-pinterest.svg?branch=master)](https://travis-ci.org/carrot/go-pinterest) [![Coverage Status](https://coveralls.io/repos/github/carrot/go-pinterest/badge.svg?branch=master)](https://coveralls.io/github/carrot/go-pinterest?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/carrot/go-pinterest)](https://goreportcard.com/report/github.com/carrot/go-pinterest)
 
 This is a Go client for the Pinterest API.  For more information about the Pinterest API, check out their [getting started](https://developers.pinterest.com/docs/api/overview/) guide.
 
