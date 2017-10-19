@@ -860,6 +860,7 @@ func (suite *ClientTestSuite) TestSuccessfulMeFollowersFetch() {
 		&controllers.MeFollowersFetchOptionals{},
 	)
 	assert.Equal(suite.T(), nil, err)
+	assert.True(suite.T(), len(*users) > 0)
 
 	// Load second page
 	users, page, err = suite.client.Me.Followers.Fetch(
@@ -909,6 +910,7 @@ func (suite *ClientTestSuite) TestSuccessfulMeFollowingBoardsFetch() {
 		&controllers.MeFollowingBoardsFetchOptionals{},
 	)
 	assert.Equal(suite.T(), nil, err)
+	assert.True(suite.T(), len(*boards) > 0)
 
 	// Load second page
 	boards, page, err = suite.client.Me.Following.Boards.Fetch(
