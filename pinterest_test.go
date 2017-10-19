@@ -1,10 +1,8 @@
 package pinterest_test
 
 import (
-	"fmt"
 	"net/http"
 	"os"
-	"reflect"
 	"testing"
 	"time"
 
@@ -1336,13 +1334,25 @@ func (suite *ClientTestSuite) TestUnauthorizedMeSearchBoardsFetch() {
 // the pins of the authorized user
 func (suite *ClientTestSuite) TestSuccessfulMeSearchPinsFetch() {
 	// Load first page
-	_, _, err := suite.client.Me.Search.Pins.Fetch(
+	pins, page, err := suite.client.Me.Search.Pins.Fetch(
 		"Go Gopher",
 		&controllers.MeSearchPinsFetchOptionals{
 			Limit: 1,
 		},
 	)
 	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*pins), 1)
+
+	// Load Second page
+	pins, page, err = suite.client.Me.Search.Pins.Fetch(
+		"Go Gopher",
+		&controllers.MeSearchPinsFetchOptionals{
+			Limit:  1,
+			Cursor: page.Cursor,
+		},
+	)
+	assert.Equal(suite.T(), nil, err)
+	assert.Equal(suite.T(), len(*pins), 1)
 }
 
 // TestTimeoutMeSearchPinsFetch tests that an error is appropriately thrown
@@ -1397,7 +1407,6 @@ func (suite *ClientTestSuite) TestUnauthorizedOAuthTokenCreate() {
 		// Should be a 401
 		assert.Equal(suite.T(), http.StatusUnauthorized, pinterestError.StatusCode)
 	} else {
-		fmt.Println(reflect.TypeOf(err))
 		// Make this error out, should always be a PinterestError
 		assert.Equal(suite.T(), true, false)
 	}
