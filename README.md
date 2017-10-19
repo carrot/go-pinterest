@@ -278,18 +278,6 @@ err := client.Me.Following.Users.Create("hhsnopek")
 err := client.Me.Following.Users.Delete("hhsnopek")
 ```
 
-### Return Pins that the logged in user has liked
-
-`[GET] /v1/me/likes/`
-
-```go
-pins, page, err := client.Me.Likes.Fetch(
-    &controllers.MeLikesFetchOptionals{
-        Cursor: "some-cursor",
-    },
-)
-```
-
 ### Return the logged in user's Pins
 
 `[GET] /v1/me/pins/`
