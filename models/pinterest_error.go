@@ -12,6 +12,7 @@ import (
 type PinterestError struct {
 	StatusCode int    `json:"status_code"`
 	Message    string `json:"message"`
+	Limit      TypeRatelimit
 }
 
 func (e *PinterestError) Error() string {
@@ -32,6 +33,7 @@ func WrapPinterestError(httpResponse *http.Response, bodyResponse *Response, err
 		return &PinterestError{
 			StatusCode: httpResponse.StatusCode,
 			Message:    bodyResponse.Message,
+			Limit:      GetRatelimit(httpResponse),
 		}
 	}
 
