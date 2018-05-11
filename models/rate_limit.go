@@ -15,7 +15,7 @@ type TypeRatelimit struct {
 func GetLimit(httpResp *http.Response, key string) int {
 	if val, ok := httpResp.Header[key]; ok {
 		rateLimit, err := strconv.Atoi(val[0])
-		if err == nil {
+		if err != nil {
 			fmt.Println(err)
 			return 0
 		}
