@@ -15,7 +15,7 @@ type TypeRatelimit struct {
 func GetLimit(httpResp *http.Response, key string) int {
 	if val, ok := httpResp.Header[key]; ok {
 		rateLimit, err := strconv.Atoi(val[0])
-		if err != nil {
+		if err == nil {
 			fmt.Println(err)
 			return 0
 		}
@@ -26,8 +26,8 @@ func GetLimit(httpResp *http.Response, key string) int {
 
 func GetRatelimit(httpResp *http.Response) TypeRatelimit {
 	return TypeRatelimit {
-		Remaining: GetLimit(httpResp, "X-Ratelimit-Remaining"),
+		Remaining: GetLimit(httpResp, "X-Ratelimit-Refresh"),
 		Limit: GetLimit(httpResp, "X-Ratelimit-Limit"),
-		Refresh: GetLimit(httpResp, "X-Ratelimit-Refresh"),
+		Refresh: GetLimit(httpResp, "X-Ratelimit-Remaining"),
 	}
 }
