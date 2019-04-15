@@ -26,20 +26,25 @@ type BoardsPinsFetchOptionals struct {
 
 // Fetch loads a board from the board_spec (username/board-slug)
 // Endpoint: [GET] /v1/boards/<board_spec:board>/pins/
-func (bpc *BoardsPinsController) Fetch(boardSpec string, optionals *BoardsPinsFetchOptionals) (*[]models.Pin, error) {
+func (bpc *BoardsPinsController) Fetch(boardSpec string, optionals *BoardsPinsFetchOptionals) (*[]models.Pin, *models.Page, error) {
 	// Build + execute request
 	resp := new(models.Response)
 	resp.Data = &[]models.Pin{}
-	httpResp, err := bpc.wreckerClient.Get("/boards/"+boardSpec+"/pins/").
+	request := bpc.wreckerClient.Get("/boards/"+boardSpec+"/pins/").
 		URLParam("fields", models.PIN_FIELDS).
-		Into(resp).
-		Execute()
+		Into(resp)
+
+	if optionals.Cursor != "" {
+		request.URLParam("cursor", optionals.Cursor)
+	}
+
+	httpResp, err := request.Execute()
 
 	// Check Error
 	if err = models.WrapPinterestError(httpResp, resp, err); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// OK
-	return resp.Data.(*[]models.Pin), nil
+	return resp.Data.(*[]models.Pin), &resp.Page, nil
 }
