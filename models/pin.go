@@ -14,7 +14,7 @@ type Pin struct {
 	Note         string       `json:"note"`
 	Color        string       `json:"color"`
 	Counts       PinCounts    `json:"counts"`
-	Media        Media        `json:"json:"media"`
+	Media        Media        `json:"media"`
 	OriginalLink string       `json:"original_link"`
 	Attribution  Attribution  `json:"attribution"`
 	Image        PinImage     `json:"image"`
