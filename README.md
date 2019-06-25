@@ -105,7 +105,7 @@ if pinterestError, ok := err.(*models.PinterestError); ok {
 accessToken, err := client.OAuth.Token.Create(
     "client-id",
     "client-secret",
-    "access-code"
+    "access-code",
 )
 ```
 
