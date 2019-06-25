@@ -15,7 +15,7 @@ type User struct {
 	LastName    string       `json:"last_name"`
 	Bio         string       `json:"bio"`
 	AccountType string       `json:"account_type"`
-	Url         string       `json:"account_type"`
+	Url         string       `json:"url"`
 	CreatedAt   iso8601.Time `json:"created_at"`
 	Counts      UserCounts   `json:"counts"`
 	Image       Images       `json:"image"`
