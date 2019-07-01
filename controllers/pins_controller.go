@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"encoding/base64"
 	"github.com/BrandonRomano/wrecker"
-	"github.com/carrot/go-pinterest/models"
+	"github.com/jschwehn/go-pinterest/models"
 	"os"
 )
 
@@ -68,7 +68,7 @@ func (pc *PinsController) Create(boardSpec string, note string, optionals *PinCr
 		request.FormParam("image_url", optionals.ImageUrl)
 	} else if fileInfo, err := optionals.Image.Stat(); err == nil {
 		// Create a new buffer based on file size
-		var size int64 = fileInfo.Size()
+		var size = fileInfo.Size()
 		buf := make([]byte, size)
 
 		// Read file content into buffer

@@ -3,9 +3,9 @@ go:
   - 1.6
   - master
 before_install:
-  - go get github.com/Masterminds/glide
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 install:
-  - $HOME/gopath/bin/glide install
+  - $HOME/gopath/bin/dep ensure
   - go get github.com/mattn/goveralls
   - go get golang.org/x/tools/cmd/cover
 script:

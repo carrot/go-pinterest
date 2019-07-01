@@ -16,3 +16,5 @@ vendor/*
 
 # Compiled files
 pinterest-go-client
+/demo/demo
+/demo/credentials.go

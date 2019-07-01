@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/BrandonRomano/wrecker"
-	"github.com/carrot/go-pinterest/models"
+	"github.com/jschwehn/go-pinterest/models"
+	"strings"
 )
 
 // OAuthTokenController is the controller that is responsible
@@ -16,6 +18,20 @@ func newOAuthTokenController(wc *wrecker.Wrecker) *OAuthTokenController {
 	return &OAuthTokenController{
 		wreckerClient: wc,
 	}
+}
+
+func (otc *OAuthTokenController) RequestAccessToken(clientId, clientSecret string, scope []string) (string, error) {
+	accessToken := new(models.AccessToken)
+	httpResp, err := otc.wreckerClient.Post("/oauth/").
+		URLParam("response_type", "code").
+		URLParam("client_id", clientId).
+		URLParam("state", "").
+		URLParam("scope", strings.Join(scope, ",")).
+		Into(accessToken).
+		Execute()
+	fmt.Printf("%v\n", err)
+	fmt.Printf("%v\n", httpResp)
+	return "", nil
 }
 
 // Create generates an access token
